@@ -1,9 +1,10 @@
 import { Child } from '@prisma/client';
+
+import { prisma } from 'src/prisma/prisma-client';
 import {
   IChildrenRepository,
   ICreateChildnterface,
-} from 'src/modules/interfaces/children-repository.interface';
-import { prisma } from 'src/prisma/prisma-client';
+} from '../interfaces/children-repository.interface';
 
 export class ChildrenRepository implements IChildrenRepository {
   async create({

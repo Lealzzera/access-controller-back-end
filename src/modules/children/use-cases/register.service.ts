@@ -1,8 +1,8 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 import { Child } from '@prisma/client';
-import { IChildrenRepository } from 'src/modules/interfaces/children-repository.interface';
+import { IChildrenRepository } from '../interfaces/children-repository.interface';
 
-type RegisterServiceRequest = {
+type RegisterChildServiceRequest = {
   name: string;
   cpf: string;
   grade?: string;
@@ -12,7 +12,7 @@ type RegisterServiceRequest = {
   period: 'MORNING' | 'AFTERNOON' | 'ALLDAY';
 };
 
-type RegisterServiceResponse = {
+type RegisterChildServiceResponse = {
   child: Child;
 };
 
@@ -30,7 +30,7 @@ export class RegisterService {
     birthDate,
     picture,
     period,
-  }: RegisterServiceRequest): Promise<RegisterServiceResponse> {
+  }: RegisterChildServiceRequest): Promise<RegisterChildServiceResponse> {
     if (!name.length || !cpf.length || !period.length) {
       throw new BadRequestException(
         'Must to provide these following data, name, cpf and period',
