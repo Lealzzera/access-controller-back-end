@@ -1,8 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { IInstitutionsRepository } from '../interfaces/institutions-repository.interface';
 import { Institution } from '@prisma/client';
+import { hash } from 'bcrypt';
 
 type RegisterInstitutionServiceRequest = {
+  name: string;
   cnpj?: string;
   street?: string;
   neighborhood?: string;
@@ -19,13 +21,14 @@ type RegisterInstitutionServiceResponse = {
   institution: Institution;
 };
 
-export class RegisterService {
+export class RegisterInstitutionService {
   constructor(
     @Inject('IInstitutionsRepository')
     private readonly institutionsRepository: IInstitutionsRepository,
   ) {}
 
   async exec({
+    name,
     cnpj,
     street,
     neighborhood,
@@ -37,7 +40,9 @@ export class RegisterService {
     password,
     responsible,
   }: RegisterInstitutionServiceRequest): Promise<RegisterInstitutionServiceResponse> {
+    const passwordHashed = await hash(password, 6);
     const institution = await this.institutionsRepository.create({
+      name,
       cnpj,
       street,
       neighborhood,
@@ -46,7 +51,7 @@ export class RegisterService {
       cep,
       picture,
       email,
-      password,
+      password: passwordHashed,
       responsible,
     });
 

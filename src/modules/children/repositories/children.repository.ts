@@ -15,6 +15,7 @@ export class ChildrenRepository implements IChildrenRepository {
     birthDate,
     picture,
     period,
+    institutionId,
   }: ICreateChildnterface): Promise<Child> {
     const child = await prisma.child.create({
       data: {
@@ -25,6 +26,7 @@ export class ChildrenRepository implements IChildrenRepository {
         birthDate,
         picture,
         period,
+        institutionId,
       },
     });
 

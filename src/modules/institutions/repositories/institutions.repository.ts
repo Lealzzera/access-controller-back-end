@@ -7,6 +7,7 @@ import { prisma } from 'src/prisma/prisma-client';
 
 export class InstitutionsRepository implements IInstitutionsRepository {
   async create({
+    name,
     cnpj,
     street,
     neighborhood,
@@ -20,6 +21,7 @@ export class InstitutionsRepository implements IInstitutionsRepository {
   }: ICreateInstitution): Promise<Institution> {
     const institution = await prisma.institution.create({
       data: {
+        name,
         cnpj,
         street,
         neighborhood,

@@ -1,6 +1,7 @@
 import { Institution } from '@prisma/client';
 
 export interface ICreateInstitution {
+  name;
   cnpj?: string;
   street?: string;
   neighborhood?: string;
@@ -15,6 +16,7 @@ export interface ICreateInstitution {
 
 export interface IInstitutionsRepository {
   create({
+    name,
     cnpj,
     street,
     neighborhood,

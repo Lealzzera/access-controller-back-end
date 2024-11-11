@@ -49,6 +49,7 @@ export class RegisterService {
       birthDate,
       picture,
       period,
+      institutionId,
     });
 
     return { child };

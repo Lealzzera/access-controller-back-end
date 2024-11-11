@@ -8,6 +8,7 @@ export interface ICreateChildnterface {
   birthDate?: Date;
   picture?: string;
   period: 'MORNING' | 'AFTERNOON' | 'ALLDAY';
+  institutionId: string;
 }
 
 export interface IChildrenRepository {
@@ -19,5 +20,6 @@ export interface IChildrenRepository {
     birthDate,
     picture,
     period,
+    institutionId,
   }: ICreateChildnterface): Promise<Child>;
 }
