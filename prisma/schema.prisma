@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Children {
+  id           String                  @id @default(uuid())
+  name         String
+  cpf          String                  @unique
+  grade        String?
+  teacher      String?
+  birthDate    DateTime?               @db.Date
+  picture      String?
+  period       Period
+  created_at   DateTime                @default(now())
+  responsibles ResponsibleOnChildren[]
+
+  @@map("childrens")
+}
+
+model Responsible {
+  id           String                  @id @default(uuid())
+  name         String
+  email        String                  @unique
+  password     String
+  street       String?
+  neighborhood String?
+  city         String?
+  state        String?
+  cep          String?
+  picture      String?
+  children     ResponsibleOnChildren[]
+  created_at   DateTime                @default(now())
+
+  @@map("responsibles")
+}
+
+model ResponsibleOnChildren {
+  childId       String
+  responsibleId String
+  child         Children    @relation(fields: [childId], references: [id])
+  responsible   Responsible @relation(fields: [responsibleId], references: [id])
+
+  @@id([childId, responsibleId])
+  @@map("responsibleOnChildren")
+}
+
+enum Period {
+  MORNING
+  AFTERNOON
+  ALLDAY
+}
