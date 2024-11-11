@@ -62,6 +62,7 @@ model ResponsibleOnChildren {
 model Institution {
   id           String                    @id @default(uuid())
   cnpj         String?                   @unique
+  name         String
   street       String?
   neighborhood String?
   city         String?
