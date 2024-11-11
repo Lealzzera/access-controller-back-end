@@ -31,10 +31,10 @@ model Child {
 }
 
 model Responsible {
-  id           String                    @id @default(uuid())
+  id           String                     @id @default(uuid())
   name         String
-  email        String                    @unique
-  cpf          String?                   @unique
+  email        String                     @unique
+  cpf          String?                    @unique
   password     String
   street       String?
   neighborhood String?
@@ -43,8 +43,8 @@ model Responsible {
   cep          String?
   picture      String?
   children     ResponsibleOnChildren[]
-  created_at   DateTime                  @default(now())
-  institutions ReponsibleOnInstitution[]
+  created_at   DateTime                   @default(now())
+  institutions ResponsibleOnInstitution[]
 
   @@map("responsible")
 }
@@ -60,8 +60,8 @@ model ResponsibleOnChildren {
 }
 
 model Institution {
-  id           String                    @id @default(uuid())
-  cnpj         String?                   @unique
+  id           String                     @id @default(uuid())
+  cnpj         String?                    @unique
   name         String
   street       String?
   neighborhood String?
@@ -69,17 +69,17 @@ model Institution {
   state        String?
   cep          String?
   picture      String?
-  email        String                    @unique
+  email        String                     @unique
   responsible  String
   password     String
   children     Child[]
-  created_at   DateTime                  @default(now())
-  responsibles ReponsibleOnInstitution[]
+  created_at   DateTime                   @default(now())
+  responsibles ResponsibleOnInstitution[]
 
   @@map("institutions")
 }
 
-model ReponsibleOnInstitution {
+model ResponsibleOnInstitution {
   institutionId String
   responsibleId String
   institution   Institution @relation(fields: [institutionId], references: [id])
