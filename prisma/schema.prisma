@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Children {
+model Child {
   id           String                  @id @default(uuid())
   name         String
   cpf          String                  @unique
@@ -25,7 +25,7 @@ model Children {
   created_at   DateTime                @default(now())
   responsibles ResponsibleOnChildren[]
 
-  @@map("childrens")
+  @@map("children")
 }
 
 model Responsible {
@@ -48,7 +48,7 @@ model Responsible {
 model ResponsibleOnChildren {
   childId       String
   responsibleId String
-  child         Children    @relation(fields: [childId], references: [id])
+  child         Child       @relation(fields: [childId], references: [id])
   responsible   Responsible @relation(fields: [responsibleId], references: [id])
 
   @@id([childId, responsibleId])
