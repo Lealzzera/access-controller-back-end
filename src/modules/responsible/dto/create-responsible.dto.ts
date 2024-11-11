@@ -7,6 +7,12 @@ import {
 
 export class CreateResponsibleDTO {
   @IsString()
+  institutionId: string;
+
+  @IsString()
+  childId: string;
+
+  @IsString()
   name: string;
 
   @IsEmail()
@@ -44,4 +50,8 @@ export class CreateResponsibleDTO {
   @IsString()
   @IsOptional()
   picture: string;
+
+  @IsString()
+  @IsOptional()
+  cpf: string;
 }

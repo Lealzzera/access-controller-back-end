@@ -10,9 +10,12 @@ export interface ICreateResponsible {
   state?: string;
   cep?: string;
   picture?: string;
+  cpf: string;
 }
 
 export interface IResponsibleRepository {
+  findResponsibleByEmail(email: string): Promise<Responsible | null>;
+  findResponsibleById(id: string): Promise<Responsible | null>;
   create({
     email,
     name,
@@ -23,5 +26,6 @@ export interface IResponsibleRepository {
     picture,
     state,
     street,
+    cpf,
   }: ICreateResponsible): Promise<Responsible>;
 }

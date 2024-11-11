@@ -7,6 +7,15 @@ import {
 } from '../interfaces/children-repository.interface';
 
 export class ChildrenRepository implements IChildrenRepository {
+  async findChildById(id: string): Promise<Child | null> {
+    const child = await prisma.child.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return child ?? null;
+  }
   async create({
     name,
     cpf,

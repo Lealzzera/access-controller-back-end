@@ -22,4 +22,6 @@ export interface IChildrenRepository {
     period,
     institutionId,
   }: ICreateChildnterface): Promise<Child>;
+
+  findChildById(id: string): Promise<Child | null>;
 }

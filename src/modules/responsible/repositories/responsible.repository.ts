@@ -6,6 +6,25 @@ import {
 import { prisma } from 'src/prisma/prisma-client';
 
 export class ResponsibleRepository implements IResponsibleRepository {
+  async findResponsibleByEmail(email: string): Promise<Responsible | null> {
+    const responsible = await prisma.responsible.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    return responsible ?? null;
+  }
+
+  async findResponsibleById(id: string): Promise<Responsible | null> {
+    const responsible = await prisma.responsible.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return responsible ?? null;
+  }
   async create({
     email,
     name,
@@ -16,6 +35,7 @@ export class ResponsibleRepository implements IResponsibleRepository {
     picture,
     state,
     street,
+    cpf,
   }: ICreateResponsible): Promise<Responsible> {
     const responsible = await prisma.responsible.create({
       data: {
@@ -28,6 +48,7 @@ export class ResponsibleRepository implements IResponsibleRepository {
         picture,
         state,
         street,
+        cpf,
       },
     });
     return responsible;
