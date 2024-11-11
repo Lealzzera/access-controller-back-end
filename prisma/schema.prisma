@@ -14,24 +14,27 @@ datasource db {
 }
 
 model Child {
-  id           String                  @id @default(uuid())
-  name         String
-  cpf          String                  @unique
-  grade        String?
-  teacher      String?
-  birthDate    DateTime?               @db.Date
-  picture      String?
-  period       Period
-  created_at   DateTime                @default(now())
-  responsibles ResponsibleOnChildren[]
+  id            String                  @id @default(uuid())
+  name          String
+  cpf           String                  @unique
+  grade         String?
+  teacher       String?
+  birthDate     DateTime?               @db.Date
+  picture       String?
+  period        Period
+  created_at    DateTime                @default(now())
+  responsible   ResponsibleOnChildren[]
+  institution   Institution?            @relation(fields: [institutionId], references: [id])
+  institutionId String
 
   @@map("children")
 }
 
 model Responsible {
-  id           String                  @id @default(uuid())
+  id           String                    @id @default(uuid())
   name         String
-  email        String                  @unique
+  email        String                    @unique
+  cpf          String?                   @unique
   password     String
   street       String?
   neighborhood String?
@@ -40,9 +43,10 @@ model Responsible {
   cep          String?
   picture      String?
   children     ResponsibleOnChildren[]
-  created_at   DateTime                @default(now())
+  created_at   DateTime                  @default(now())
+  institutions ReponsibleOnInstitution[]
 
-  @@map("responsibles")
+  @@map("responsible")
 }
 
 model ResponsibleOnChildren {
@@ -53,6 +57,35 @@ model ResponsibleOnChildren {
 
   @@id([childId, responsibleId])
   @@map("responsibleOnChildren")
+}
+
+model Institution {
+  id           String                    @id @default(uuid())
+  cnpj         String?                   @unique
+  street       String?
+  neighborhood String?
+  city         String?
+  state        String?
+  cep          String?
+  picture      String?
+  email        String                    @unique
+  responsible  String
+  password     String
+  children     Child[]
+  created_at   DateTime                  @default(now())
+  responsibles ReponsibleOnInstitution[]
+
+  @@map("institutions")
+}
+
+model ReponsibleOnInstitution {
+  institutionId String
+  responsibleId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  responsible   Responsible @relation(fields: [responsibleId], references: [id])
+
+  @@id([institutionId, responsibleId])
+  @@map("responsibleOnInstitution")
 }
 
 enum Period {
