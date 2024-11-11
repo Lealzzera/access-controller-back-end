@@ -10,6 +10,7 @@ type RegisterChildServiceRequest = {
   birthDate?: Date;
   picture?: string;
   period: 'MORNING' | 'AFTERNOON' | 'ALLDAY';
+  institutionId: string;
 };
 
 type RegisterChildServiceResponse = {
@@ -30,7 +31,11 @@ export class RegisterService {
     birthDate,
     picture,
     period,
+    institutionId,
   }: RegisterChildServiceRequest): Promise<RegisterChildServiceResponse> {
+    if (!institutionId.length) {
+      throw new BadRequestException('An institutionId must be provided');
+    }
     if (!name.length || !cpf.length || !period.length) {
       throw new BadRequestException(
         'Must to provide these following data, name, cpf and period',

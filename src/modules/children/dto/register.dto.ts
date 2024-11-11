@@ -28,4 +28,7 @@ export class RegisterChildDTO {
     message: 'Period must be one of MORNING, AFTERNOON or ALLDAY',
   })
   period: Period;
+
+  @IsString()
+  institutionId: string;
 }

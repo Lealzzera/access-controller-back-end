@@ -13,7 +13,16 @@ export class ChildrenController {
   @HttpCode(201)
   async register(
     @Body()
-    { name, cpf, grade, teacher, birthDate, picture, period }: RegisterChildDTO,
+    {
+      name,
+      cpf,
+      grade,
+      teacher,
+      birthDate,
+      picture,
+      period,
+      institutionId,
+    }: RegisterChildDTO,
   ) {
     try {
       await this.registerService.exec({
@@ -24,6 +33,7 @@ export class ChildrenController {
         birthDate,
         picture,
         period,
+        institutionId,
       });
     } catch (err) {
       return err;
