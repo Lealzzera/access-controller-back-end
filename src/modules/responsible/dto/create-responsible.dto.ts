@@ -1,5 +1,7 @@
+import { Kinship } from '@prisma/client';
 import {
   IsEmail,
+  IsEnum,
   IsOptional,
   IsString,
   IsStrongPassword,
@@ -54,4 +56,9 @@ export class CreateResponsibleDTO {
   @IsString()
   @IsOptional()
   cpf: string;
+
+  @IsEnum(Kinship, {
+    message: 'Period must be one of MORNING, AFTERNOON or ALLDAY',
+  })
+  kinship: Kinship;
 }

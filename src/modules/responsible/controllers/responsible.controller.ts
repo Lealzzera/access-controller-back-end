@@ -26,6 +26,7 @@ export class ResponsibleController {
       cep,
       picture,
       cpf,
+      kinship,
     }: CreateResponsibleDTO,
   ) {
     try {
@@ -42,6 +43,7 @@ export class ResponsibleController {
         cep,
         picture,
         cpf,
+        kinship,
       });
     } catch (err) {
       return err;
