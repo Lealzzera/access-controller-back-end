@@ -23,6 +23,7 @@ model Child {
   picture       String?
   period        Period
   created_at    DateTime                @default(now())
+  deleted_at    DateTime?               @default(now())
   responsible   ResponsibleOnChildren[]
   institution   Institution?            @relation(fields: [institutionId], references: [id])
   institutionId String
@@ -43,6 +44,7 @@ model Responsible {
   cep          String?
   picture      String?
   children     ResponsibleOnChildren[]
+  deleted_at   DateTime?                  @default(now())
   created_at   DateTime                   @default(now())
   institutions ResponsibleOnInstitution[]
 
@@ -52,6 +54,8 @@ model Responsible {
 model ResponsibleOnChildren {
   childId       String
   responsibleId String
+  kinship       Kinship
+  allowed       Boolean?
   child         Child       @relation(fields: [childId], references: [id])
   responsible   Responsible @relation(fields: [responsibleId], references: [id])
 
@@ -74,6 +78,7 @@ model Institution {
   password     String
   children     Child[]
   created_at   DateTime                   @default(now())
+  deleted_at   DateTime?                  @default(now())
   responsibles ResponsibleOnInstitution[]
 
   @@map("institutions")
@@ -93,4 +98,19 @@ enum Period {
   MORNING
   AFTERNOON
   ALLDAY
+}
+
+enum Kinship {
+  MOTHER
+  FATHER
+  UNCLE
+  AUNT
+  GRANDPARENT
+  BROTHER
+  SISTER
+  STEPPARENT
+  COUSIN
+  GUARDIAN
+  GODPARENT
+  OTHER
 }
