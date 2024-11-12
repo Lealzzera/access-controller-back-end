@@ -55,7 +55,7 @@ model ResponsibleOnChildren {
   childId       String
   responsibleId String
   kinship       Kinship
-  allowed       Boolean?
+  notAllowed    Boolean?
   child         Child       @relation(fields: [childId], references: [id])
   responsible   Responsible @relation(fields: [responsibleId], references: [id])
 
