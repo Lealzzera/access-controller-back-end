@@ -22,8 +22,8 @@ model Child {
   birthDate     DateTime?               @db.Date
   picture       String?
   period        Period
-  created_at    DateTime                @default(now())
-  deleted_at    DateTime?               @default(now())
+  createdAt     DateTime                @default(now())
+  deletedAt     DateTime?
   responsible   ResponsibleOnChildren[]
   institution   Institution?            @relation(fields: [institutionId], references: [id])
   institutionId String
@@ -44,9 +44,11 @@ model Responsible {
   cep          String?
   picture      String?
   children     ResponsibleOnChildren[]
-  deleted_at   DateTime?                  @default(now())
-  created_at   DateTime                   @default(now())
+  deletedAt    DateTime?
+  createdAt    DateTime                   @default(now())
   institutions ResponsibleOnInstitution[]
+  role         Role                       @relation(fields: [roleId], references: [id])
+  roleId       String
 
   @@map("responsible")
 }
@@ -77,9 +79,11 @@ model Institution {
   responsible  String
   password     String
   children     Child[]
-  created_at   DateTime                   @default(now())
-  deleted_at   DateTime?                  @default(now())
+  createdAt    DateTime                   @default(now())
+  deletedAt    DateTime?
   responsibles ResponsibleOnInstitution[]
+  role         Role                       @relation(fields: [roleId], references: [id])
+  roleId       String
 
   @@map("institutions")
 }
@@ -94,10 +98,24 @@ model ResponsibleOnInstitution {
   @@map("responsibleOnInstitution")
 }
 
+model Role {
+  id           String        @id @default(uuid())
+  role         RoleEnum      @unique
+  responsibles Responsible[]
+  institutions Institution[]
+
+  @@map("role")
+}
+
 enum Period {
   MORNING
   AFTERNOON
   ALLDAY
+}
+
+enum RoleEnum {
+  INSTITUTION
+  RESPONSIBLE
 }
 
 enum Kinship {
