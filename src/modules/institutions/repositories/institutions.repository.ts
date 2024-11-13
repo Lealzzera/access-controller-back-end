@@ -7,6 +7,10 @@ import {
 } from './interfaces/institutions-repository.interface';
 
 export class InstitutionsRepository implements IInstitutionsRepository {
+  async findInstitutionByCnpj(cnpj: string): Promise<Institution | null> {
+    const institution = await prisma.institution.findFirst({ where: { cnpj } });
+    return institution;
+  }
   async create({
     name,
     cnpj,

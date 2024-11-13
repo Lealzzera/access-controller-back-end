@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
 import { Institution } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IInstitutionsRepository } from '../repositories/interfaces/institutions-repository.interface';
@@ -40,6 +40,11 @@ export class RegisterInstitutionService {
     password,
     responsible,
   }: RegisterInstitutionServiceRequest): Promise<RegisterInstitutionServiceResponse> {
+    const doesInstitutionAlreadyExist =
+      await this.institutionsRepository.findInstitutionByCnpj(cnpj);
+    if (doesInstitutionAlreadyExist) {
+      throw new BadRequestException('CNPJ provided already exists.');
+    }
     const passwordHashed = await hash(password, 6);
     const institution = await this.institutionsRepository.create({
       name,

@@ -46,7 +46,7 @@ export class ResponsibleController {
         kinship,
       });
     } catch (err) {
-      return err;
+      return err.response;
     }
   }
 }

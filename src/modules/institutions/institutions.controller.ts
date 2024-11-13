@@ -42,7 +42,7 @@ export class InstitutionController {
         street,
       });
     } catch (err) {
-      return err;
+      return err.response;
     }
   }
 }

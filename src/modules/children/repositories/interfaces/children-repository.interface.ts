@@ -12,6 +12,8 @@ export interface ICreateChildinterface {
 }
 
 export interface IChildrenRepository {
+  findChildByCpf(cpf: string): Promise<Child | null>;
+  findChildById(id: string): Promise<Child | null>;
   create({
     name,
     cpf,
@@ -22,6 +24,4 @@ export interface IChildrenRepository {
     period,
     institutionId,
   }: ICreateChildinterface): Promise<Child>;
-
-  findChildById(id: string): Promise<Child | null>;
 }
