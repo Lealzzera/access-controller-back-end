@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RegisterInstitutionService } from './use-cases/register.service';
 import { InstitutionsRepository } from './repositories/institutions.repository';
-import { InstitutionController } from './controllers/institutions.controller';
+import { InstitutionController } from './institutions.controller';
 
 @Module({
   providers: [

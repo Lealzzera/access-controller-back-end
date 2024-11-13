@@ -3,8 +3,8 @@ import { Child } from '@prisma/client';
 import { prisma } from 'src/prisma/prisma-client';
 import {
   IChildrenRepository,
-  ICreateChildnterface,
-} from '../interfaces/children-repository.interface';
+  ICreateChildinterface,
+} from './interfaces/children-repository.interface';
 
 export class ChildrenRepository implements IChildrenRepository {
   async findChildById(id: string): Promise<Child | null> {
@@ -25,7 +25,7 @@ export class ChildrenRepository implements IChildrenRepository {
     picture,
     period,
     institutionId,
-  }: ICreateChildnterface): Promise<Child> {
+  }: ICreateChildinterface): Promise<Child> {
     const child = await prisma.child.create({
       data: {
         name,

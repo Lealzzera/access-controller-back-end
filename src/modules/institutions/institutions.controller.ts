@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { RegisterInstitutionDTO } from '../dto/register-institution.dto';
-import { RegisterInstitutionService } from '../use-cases/register.service';
+import { RegisterInstitutionDTO } from './register-institution.dto';
+import { RegisterInstitutionService } from './use-cases/register.service';
 
 @Controller({
   path: 'institution',

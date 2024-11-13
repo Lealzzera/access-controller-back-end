@@ -1,6 +1,6 @@
 import { Child } from '@prisma/client';
 
-export interface ICreateChildnterface {
+export interface ICreateChildinterface {
   name: string;
   cpf: string;
   grade?: string;
@@ -21,7 +21,7 @@ export interface IChildrenRepository {
     picture,
     period,
     institutionId,
-  }: ICreateChildnterface): Promise<Child>;
+  }: ICreateChildinterface): Promise<Child>;
 
   findChildById(id: string): Promise<Child | null>;
 }

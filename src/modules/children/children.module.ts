@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { RegisterService } from './use-cases/register.service';
 import { ChildrenRepository } from './repositories/children.repository';
-import { ChildrenController } from './controllers/children.controller';
 import { ResponsibleModule } from '../responsible/responsible.module';
 import { PrismaClient } from '@prisma/client';
+import { ChildrenController } from './children.controller';
 
 @Module({
   imports: [ResponsibleModule],

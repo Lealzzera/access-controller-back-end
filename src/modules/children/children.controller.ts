@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
-import { RegisterService } from '../use-cases/register.service';
-import { RegisterChildDTO } from '../dto/register.dto';
+import { RegisterChildDTO } from './register.dto';
+import { RegisterService } from './use-cases/register.service';
 
 @Controller({
   path: 'children',

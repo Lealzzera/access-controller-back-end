@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { CreateResponsibleDTO } from '../dto/create-responsible.dto';
-import { RegisterResponsibleService } from '../use-cases/register-responsible.service';
+import { RegisterResponsibleService } from './use-cases/register-responsible.service';
+import { CreateResponsibleDTO } from './create-responsible.dto';
 
 @Controller({
   version: '1',

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { IInstitutionsRepository } from '../interfaces/institutions-repository.interface';
 import { Institution } from '@prisma/client';
 import { hash } from 'bcrypt';
+import { IInstitutionsRepository } from '../repositories/interfaces/institutions-repository.interface';
 
 type RegisterInstitutionServiceRequest = {
   name: string;

@@ -1,7 +1,7 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 import { Child, Kinship, PrismaClient } from '@prisma/client';
-import { IChildrenRepository } from '../interfaces/children-repository.interface';
 import { RegisterResponsibleService } from 'src/modules/responsible/use-cases/register-responsible.service';
+import { IChildrenRepository } from '../repositories/interfaces/children-repository.interface';
 
 export type ResponsibleData = {
   kinship: Kinship;
