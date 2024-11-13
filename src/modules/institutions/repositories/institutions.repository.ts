@@ -18,6 +18,7 @@ export class InstitutionsRepository implements IInstitutionsRepository {
     password,
     responsible,
     picture,
+    role,
   }: ICreateInstitution): Promise<Institution> {
     const institution = await prisma.institution.create({
       data: {
@@ -32,6 +33,7 @@ export class InstitutionsRepository implements IInstitutionsRepository {
         password,
         responsible,
         picture,
+        role,
       },
     });
 

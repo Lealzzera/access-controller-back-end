@@ -1,5 +1,13 @@
-import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Period } from 'src/enums/period.enum';
+import { ResponsibleData } from '../use-cases/register.service';
 
 export class RegisterChildDTO {
   @IsString()
@@ -31,4 +39,7 @@ export class RegisterChildDTO {
 
   @IsString()
   institutionId: string;
+
+  @IsArray()
+  responsible: ResponsibleData[];
 }

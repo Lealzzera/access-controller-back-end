@@ -53,6 +53,7 @@ export class RegisterInstitutionService {
       email,
       password: passwordHashed,
       responsible,
+      role: 'INSTITUTION',
     });
 
     return { institution };

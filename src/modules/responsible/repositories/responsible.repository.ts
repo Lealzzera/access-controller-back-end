@@ -36,6 +36,7 @@ export class ResponsibleRepository implements IResponsibleRepository {
     state,
     street,
     cpf,
+    role,
   }: ICreateResponsible): Promise<Responsible> {
     const responsible = await prisma.responsible.create({
       data: {
@@ -49,6 +50,7 @@ export class ResponsibleRepository implements IResponsibleRepository {
         state,
         street,
         cpf,
+        role,
       },
     });
     return responsible;

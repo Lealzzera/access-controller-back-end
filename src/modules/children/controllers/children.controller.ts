@@ -22,6 +22,7 @@ export class ChildrenController {
       picture,
       period,
       institutionId,
+      responsible,
     }: RegisterChildDTO,
   ) {
     try {
@@ -34,6 +35,7 @@ export class ChildrenController {
         picture,
         period,
         institutionId,
+        responsible,
       });
     } catch (err) {
       return err;

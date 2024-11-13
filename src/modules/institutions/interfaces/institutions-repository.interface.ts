@@ -1,4 +1,4 @@
-import { Institution } from '@prisma/client';
+import { Institution, Role } from '@prisma/client';
 
 export interface ICreateInstitution {
   name;
@@ -12,6 +12,7 @@ export interface ICreateInstitution {
   email: string;
   responsible: string;
   password: string;
+  role: Role;
 }
 
 export interface IInstitutionsRepository {
@@ -27,5 +28,6 @@ export interface IInstitutionsRepository {
     password,
     responsible,
     picture,
+    role,
   }: ICreateInstitution): Promise<Institution>;
 }

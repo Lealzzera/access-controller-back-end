@@ -108,6 +108,7 @@ export class RegisterResponsibleService {
       state,
       street,
       cpf,
+      role: 'RESPONSIBLE',
     });
 
     await Promise.all([

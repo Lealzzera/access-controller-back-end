@@ -47,8 +47,7 @@ model Responsible {
   deletedAt    DateTime?
   createdAt    DateTime                   @default(now())
   institutions ResponsibleOnInstitution[]
-  role         Role                       @relation(fields: [roleId], references: [id])
-  roleId       String
+  role         Role
 
   @@map("responsible")
 }
@@ -82,8 +81,7 @@ model Institution {
   createdAt    DateTime                   @default(now())
   deletedAt    DateTime?
   responsibles ResponsibleOnInstitution[]
-  role         Role                       @relation(fields: [roleId], references: [id])
-  roleId       String
+  role         Role
 
   @@map("institutions")
 }
@@ -98,22 +96,13 @@ model ResponsibleOnInstitution {
   @@map("responsibleOnInstitution")
 }
 
-model Role {
-  id           String        @id @default(uuid())
-  role         RoleEnum      @unique
-  responsibles Responsible[]
-  institutions Institution[]
-
-  @@map("role")
-}
-
 enum Period {
   MORNING
   AFTERNOON
   ALLDAY
 }
 
-enum RoleEnum {
+enum Role {
   INSTITUTION
   RESPONSIBLE
 }

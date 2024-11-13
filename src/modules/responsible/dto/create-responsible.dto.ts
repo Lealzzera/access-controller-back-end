@@ -58,7 +58,7 @@ export class CreateResponsibleDTO {
   cpf: string;
 
   @IsEnum(Kinship, {
-    message: 'Period must be one of MORNING, AFTERNOON or ALLDAY',
+    message: 'Provide a valid kinship.',
   })
   kinship: Kinship;
 }

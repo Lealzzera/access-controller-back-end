@@ -1,4 +1,4 @@
-import { Responsible } from '@prisma/client';
+import { Responsible, Role } from '@prisma/client';
 
 export interface ICreateResponsible {
   name: string;
@@ -11,6 +11,7 @@ export interface ICreateResponsible {
   cep?: string;
   picture?: string;
   cpf: string;
+  role: Role;
 }
 
 export interface IResponsibleRepository {
@@ -27,5 +28,6 @@ export interface IResponsibleRepository {
     state,
     street,
     cpf,
+    role,
   }: ICreateResponsible): Promise<Responsible>;
 }

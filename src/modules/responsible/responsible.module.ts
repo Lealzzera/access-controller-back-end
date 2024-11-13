@@ -18,6 +18,7 @@ import { ResponsibleController } from './controllers/responsible.controller';
       useClass: ResponsibleOnInstitutionRepository,
     },
   ],
+  exports: [RegisterResponsibleService],
   controllers: [ResponsibleController],
 })
 export class ResponsibleModule {}
