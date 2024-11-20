@@ -4,9 +4,26 @@ import { prisma } from 'src/prisma/prisma-client';
 import {
   IChildrenRepository,
   ICreateChildinterface,
+  IFetchChildrenByInstitutionId,
 } from './interfaces/children-repository.interface';
 
 export class ChildrenRepository implements IChildrenRepository {
+  async findChildrenByInstitutionId({
+    institutionId,
+    page,
+    limit,
+  }: IFetchChildrenByInstitutionId): Promise<Child[] | null> {
+    const children = await prisma.child.findMany({
+      skip: page && limit ? (page - 1) * limit : 0,
+      take: limit || 20,
+      where: {
+        institutionId,
+        deletedAt: null,
+      },
+    });
+
+    return children;
+  }
   async findChildByCpf(cpf: string): Promise<Child | null> {
     const child = await prisma.child.findFirst({
       where: {

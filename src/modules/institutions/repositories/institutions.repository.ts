@@ -7,6 +7,15 @@ import {
 } from './interfaces/institutions-repository.interface';
 
 export class InstitutionsRepository implements IInstitutionsRepository {
+  async findInstitutionById(id: string): Promise<Institution | null> {
+    const institution = await prisma.institution.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return institution;
+  }
   async findInstitutionByEmail(email: string): Promise<Institution | null> {
     const institution = await prisma.institution.findFirst({
       where: { email },

@@ -1,8 +1,17 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { RegisterChildDTO } from './register.dto';
 import { RegisterService } from './use-cases/register.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Role } from 'src/decorators/role.decorator';
+import { FetchChildrenByInstitutionIdService } from './use-cases/fetch-children-by-institution-id.service';
 
 @Controller({
   path: 'children',
@@ -10,7 +19,10 @@ import { Role } from 'src/decorators/role.decorator';
 })
 @UseGuards(AuthGuard)
 export class ChildrenController {
-  constructor(private readonly registerService: RegisterService) {}
+  constructor(
+    private readonly registerService: RegisterService,
+    private readonly fetchChildrenByInstitutionIdService: FetchChildrenByInstitutionIdService,
+  ) {}
 
   @Post('/register')
   @HttpCode(201)
@@ -41,6 +53,28 @@ export class ChildrenController {
         institutionId,
         responsible,
       });
+    } catch (err) {
+      return err.response;
+    }
+  }
+
+  @Get()
+  @Role('INSTITUTION')
+  async fetchChildrenByInstitutionId(
+    @Query('institutionId') institutionId: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    console.log(institutionId);
+
+    try {
+      const children = await this.fetchChildrenByInstitutionIdService.exec({
+        institutionId,
+        page,
+        limit,
+      });
+
+      return children;
     } catch (err) {
       return err.response;
     }

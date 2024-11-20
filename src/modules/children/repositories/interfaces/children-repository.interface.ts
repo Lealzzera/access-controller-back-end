@@ -11,7 +11,18 @@ export interface ICreateChildinterface {
   institutionId: string;
 }
 
+export interface IFetchChildrenByInstitutionId {
+  institutionId: string;
+  page?: number;
+  limit?: number;
+}
+
 export interface IChildrenRepository {
+  findChildrenByInstitutionId({
+    institutionId,
+    page,
+    limit,
+  }: IFetchChildrenByInstitutionId): Promise<Child[] | null>;
   findChildByCpf(cpf: string): Promise<Child | null>;
   findChildById(id: string): Promise<Child | null>;
   create({
