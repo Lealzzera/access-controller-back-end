@@ -1,7 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { RegisterResponsibleService } from './use-cases/register-responsible.service';
 import { CreateResponsibleDTO } from './create-responsible.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { Role } from 'src/decorators/role.decorator';
 
+@UseGuards(AuthGuard)
 @Controller({
   version: '1',
   path: 'responsible',
@@ -11,6 +14,7 @@ export class ResponsibleController {
     private readonly registerResponsibleService: RegisterResponsibleService,
   ) {}
   @Post('/register')
+  @Role('RESPONSIBLE')
   async createResponsible(
     @Body()
     {
