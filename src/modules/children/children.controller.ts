@@ -65,8 +65,6 @@ export class ChildrenController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    console.log(institutionId);
-
     try {
       const children = await this.fetchChildrenByInstitutionIdService.exec({
         institutionId,
