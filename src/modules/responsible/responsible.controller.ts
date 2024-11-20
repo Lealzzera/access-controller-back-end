@@ -14,7 +14,7 @@ export class ResponsibleController {
     private readonly registerResponsibleService: RegisterResponsibleService,
   ) {}
   @Post('/register')
-  @Role('RESPONSIBLE')
+  @Role('INSTITUTION')
   async createResponsible(
     @Body()
     {
