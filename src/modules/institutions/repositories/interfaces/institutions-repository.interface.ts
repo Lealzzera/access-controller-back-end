@@ -16,6 +16,7 @@ export interface ICreateInstitution {
 }
 
 export interface IInstitutionsRepository {
+  findInstitutionByEmail(email: string): Promise<Institution | null>;
   findInstitutionByCnpj(cnpj: string): Promise<Institution | null>;
   create({
     name,
