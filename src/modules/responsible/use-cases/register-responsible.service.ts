@@ -4,6 +4,7 @@ import { Kinship, Responsible } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-children/repositories/interfaces/responsible-on-children-repository.interface';
 import { IResponsibleOnInstitutionRepository } from 'src/modules/responsible-on-institution/repositories/interfaces/responsible-on-institution-repository.interface';
+import { IChildrenRepository } from 'src/modules/children/repositories/interfaces/children-repository.interface';
 
 type RegisterResponsibleServiceRequest = {
   institutionId: string;
@@ -33,6 +34,8 @@ export class RegisterResponsibleService {
     private readonly responsibleOnChildrenRepository: IResponsibleOnChildrenRepository,
     @Inject('IResponsibleOnInstitutionRepository')
     private readonly responsibleOnInstitutionRepository: IResponsibleOnInstitutionRepository,
+    @Inject('IChildrenRepository')
+    private readonly childrenRepository: IChildrenRepository,
   ) {}
 
   async exec({
@@ -52,6 +55,12 @@ export class RegisterResponsibleService {
   }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse> {
     const doesResponsibleAlreadyExist =
       await this.responsibleRepository.findResponsibleByEmail(email);
+
+    const doesChildExist = await this.childrenRepository.findChildById(childId);
+
+    if (!doesChildExist) {
+      throw new BadRequestException('Child Id provided does not exist.');
+    }
 
     if (doesResponsibleAlreadyExist) {
       const isResponsibleLinkedToChild =

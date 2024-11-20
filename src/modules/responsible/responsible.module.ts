@@ -4,6 +4,7 @@ import { ResponsibleRepository } from './repositories/responsible.repository';
 import { ResponsibleOnChildrenRepository } from '../responsible-on-children/repositories/responsible-on-children.repository';
 import { ResponsibleOnInstitutionRepository } from '../responsible-on-institution/repositories/responsible-on-institution.repository';
 import { ResponsibleController } from './responsible.controller';
+import { ChildrenRepository } from '../children/repositories/children.repository';
 
 @Module({
   providers: [
@@ -17,6 +18,7 @@ import { ResponsibleController } from './responsible.controller';
       provide: 'IResponsibleOnInstitutionRepository',
       useClass: ResponsibleOnInstitutionRepository,
     },
+    { provide: 'IChildrenRepository', useClass: ChildrenRepository },
   ],
   exports: [RegisterResponsibleService],
   controllers: [ResponsibleController],

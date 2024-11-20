@@ -1,20 +1,20 @@
 import { BadRequestException, Inject } from '@nestjs/common';
-import { Child, Kinship, PrismaClient } from '@prisma/client';
+import { Child, Kinship } from '@prisma/client';
 import { RegisterResponsibleService } from 'src/modules/responsible/use-cases/register-responsible.service';
 import { IChildrenRepository } from '../repositories/interfaces/children-repository.interface';
 
 export type ResponsibleData = {
   kinship: Kinship;
-  responsibleName: string;
+  name: string;
   email: string;
   password: string;
   street?: string;
   neighborhood?: string;
   city?: string;
+  cpf: string;
   state?: string;
   cep?: string;
-  responsiblePicture?: string;
-  responsibleCpf: string;
+  picture?: string;
 };
 
 type RegisterChildServiceRequest = {
@@ -39,7 +39,6 @@ export class RegisterService {
     private readonly childrenRepository: IChildrenRepository,
     @Inject(RegisterResponsibleService)
     private readonly registerResponsibleService: RegisterResponsibleService,
-    private readonly prismaClient: PrismaClient,
   ) {}
 
   async exec({
@@ -57,10 +56,17 @@ export class RegisterService {
       throw new BadRequestException('An institutionId must be provided');
     }
 
+    //TODO: IN THE FUTURE ADD PICTURE AS A MANDATORY DATA TO ADD.
     if (!name.length || !cpf.length || !period.length) {
       throw new BadRequestException(
         'Must to provide these following data, name, cpf and period',
       );
+    }
+
+    const doesChildExist = await this.childrenRepository.findChildByCpf(cpf);
+
+    if (doesChildExist) {
+      throw new BadRequestException('Child CPF provided already exists.');
     }
 
     if (!responsible.length) {
@@ -69,7 +75,6 @@ export class RegisterService {
       );
     }
 
-    //TODO: ADJUST METHOD IN CASE USER'S PASS A WRONG RESPONSIBLE INFORMATION
     const child = await this.childrenRepository.create({
       name,
       cpf,
@@ -80,39 +85,22 @@ export class RegisterService {
       period,
       institutionId,
     });
-    const responsibleData = responsible.map(
-      ({
-        email,
-        kinship,
-        password,
-        responsibleCpf,
-        responsibleName,
-        cep,
-        city,
-        neighborhood,
-        responsiblePicture,
-        state,
-        street,
-      }) => {
+
+    const responsibleList = responsible.map(
+      ({ kinship, name, email, password, cpf }) => {
         this.registerResponsibleService.exec({
           childId: child.id,
-          email: email,
+          email,
           institutionId,
-          kinship,
           password,
-          cep,
-          name: responsibleName,
-          cpf: responsibleCpf,
-          city,
-          neighborhood,
-          picture: responsiblePicture,
-          state,
-          street,
+          cpf,
+          name,
+          kinship,
         });
       },
     );
 
-    await Promise.all(responsibleData);
+    await Promise.all(responsibleList);
 
     return { child };
   }

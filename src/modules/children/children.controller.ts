@@ -38,7 +38,7 @@ export class ChildrenController {
         responsible,
       });
     } catch (err) {
-      return err;
+      return err.response;
     }
   }
 }
