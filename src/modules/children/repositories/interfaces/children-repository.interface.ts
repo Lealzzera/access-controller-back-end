@@ -18,6 +18,7 @@ export interface IFetchChildrenByInstitutionId {
 }
 
 export interface IChildrenRepository {
+  findChildrenByIds(id: string[]): Promise<Child[] | null>;
   findChildrenByInstitutionId({
     institutionId,
     page,

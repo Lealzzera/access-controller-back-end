@@ -8,6 +8,17 @@ import {
 } from './interfaces/children-repository.interface';
 
 export class ChildrenRepository implements IChildrenRepository {
+  async findChildrenByIds(ids: string[]): Promise<Child[] | null> {
+    const children = await prisma.child.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    return children;
+  }
   async findChildrenByInstitutionId({
     institutionId,
     page,

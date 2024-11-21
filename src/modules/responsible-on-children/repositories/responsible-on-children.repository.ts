@@ -9,6 +9,18 @@ import { prisma } from 'src/prisma/prisma-client';
 export class ResponsibleOnChildrenRepository
   implements IResponsibleOnChildrenRepository
 {
+  async findChildListByResponsibleId(
+    responsibleId: string,
+  ): Promise<ResponsibleOnChildren[] | null> {
+    const childIdArray = await prisma.responsibleOnChildren.findMany({
+      where: {
+        responsibleId,
+      },
+    });
+
+    return childIdArray ?? null;
+  }
+
   async findResponsibleOnChildrenById({
     childId,
     responsibleId,
