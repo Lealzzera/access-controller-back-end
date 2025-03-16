@@ -12,7 +12,7 @@ export class AuthController {
   ) {
     try {
       const user = await this.authService.generateToken({ email, password });
-      return user;
+      return { user, statusCode: 200 };
     } catch (err) {
       return err.response;
     }

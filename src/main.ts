@@ -7,6 +7,10 @@ async function bootstrap() {
     snapshot: true,
   });
 
+  app.enableCors({
+    credentials: true,
+    origin: [process.env.ACCESS_CONTROLLER_FRONT_END],
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
