@@ -5,10 +5,12 @@ import { ResponsibleOnChildrenRepository } from '../responsible-on-children/repo
 import { ResponsibleOnInstitutionRepository } from '../responsible-on-institution/repositories/responsible-on-institution.repository';
 import { ResponsibleController } from './responsible.controller';
 import { ChildrenRepository } from '../children/repositories/children.repository';
+import { GetResponsibleDataService } from './use-cases/get-responsible-data.service';
 
 @Module({
   providers: [
     RegisterResponsibleService,
+    GetResponsibleDataService,
     { provide: 'IResponsibleRepository', useClass: ResponsibleRepository },
     {
       provide: 'IResponsibleOnChildrenRepository',
