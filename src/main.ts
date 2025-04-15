@@ -9,7 +9,7 @@ async function bootstrap() {
 
   app.enableCors({
     credentials: true,
-    origin: [process.env.ACCESS_CONTROLLER_FRONT_END],
+    origin: process.env.ACCESS_CONTROLLER_FRONT_END,
   });
   app.useGlobalPipes(
     new ValidationPipe({

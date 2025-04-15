@@ -16,8 +16,8 @@ export class AuthGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRole = this.reflector.get('role', context.getHandler());
-    const authorization = context.switchToHttp().getRequest()
-      .headers.authorization;
+    const request = context.switchToHttp().getRequest();
+    const authorization = request.headers.authorization;
 
     if (!authorization) {
       throw new UnauthorizedException();
@@ -30,6 +30,8 @@ export class AuthGuard implements CanActivate {
           secret: process.env.JWT_SECRET,
         },
       );
+
+      request.user = payload;
 
       if (requiredRole && requiredRole !== payload.role) {
         throw new ForbiddenException('Users does not have this permission');
