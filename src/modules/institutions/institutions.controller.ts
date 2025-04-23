@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RegisterInstitutionDTO } from './register-institution.dto';
 import { RegisterInstitutionService } from './use-cases/register.service';
 import { GetInstitutionByIdService } from './use-cases/get-institution-by-id.service';
@@ -48,8 +48,8 @@ export class InstitutionController {
     }
   }
 
-  @Get('')
-  async getInstitutionById(@Query('institutionId') institutionId: string) {
+  @Get('/:institutionId')
+  async getInstitutionById(@Param('institutionId') institutionId: string) {
     try {
       const institution = await this.getInstitutionByIdService.exec({
         institutionId,
