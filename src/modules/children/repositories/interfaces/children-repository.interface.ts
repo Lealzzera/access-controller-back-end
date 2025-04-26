@@ -3,11 +3,10 @@ import { Child } from '@prisma/client';
 export interface ICreateChildinterface {
   name: string;
   cpf: string;
-  grade?: string;
-  teacher?: string;
-  birthDate?: Date;
-  picture?: string;
-  period: 'MORNING' | 'AFTERNOON' | 'ALLDAY';
+  gradeId: string;
+  periodId: string;
+  birthDate: Date;
+  picture: string;
   institutionId: string;
 }
 
@@ -29,11 +28,10 @@ export interface IChildrenRepository {
   create({
     name,
     cpf,
-    grade,
-    teacher,
+    gradeId,
+    periodId,
     birthDate,
     picture,
-    period,
     institutionId,
   }: ICreateChildinterface): Promise<Child>;
 }

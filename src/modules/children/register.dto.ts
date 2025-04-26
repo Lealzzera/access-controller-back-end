@@ -1,13 +1,5 @@
-import {
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { Period } from 'src/enums/period.enum';
-import { ResponsibleData } from './use-cases/register.service';
+import { Transform } from 'class-transformer';
+import { IsDate, IsString } from 'class-validator';
 
 export class RegisterChildDTO {
   @IsString()
@@ -17,29 +9,18 @@ export class RegisterChildDTO {
   cpf: string;
 
   @IsString()
-  @IsOptional()
-  grade?: string;
+  gradeId: string;
 
   @IsString()
-  @IsOptional()
-  teacher?: string;
+  periodId: string;
 
+  @Transform(({ value }) => new Date(value))
   @IsDate()
-  @IsOptional()
-  birthDate?: Date;
+  birthDate: Date;
 
   @IsString()
-  @IsOptional()
-  picture?: string;
-
-  @IsEnum(Period, {
-    message: 'Period must be one of MORNING, AFTERNOON or ALLDAY',
-  })
-  period: Period;
+  picture: string;
 
   @IsString()
   institutionId: string;
-
-  @IsArray()
-  responsible: ResponsibleData[];
 }

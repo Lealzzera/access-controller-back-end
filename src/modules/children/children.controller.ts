@@ -35,26 +35,22 @@ export class ChildrenController {
     {
       name,
       cpf,
-      grade,
-      teacher,
+      gradeId,
       birthDate,
       picture,
-      period,
+      periodId,
       institutionId,
-      responsible,
     }: RegisterChildDTO,
   ) {
     try {
       await this.registerService.exec({
         name,
         cpf,
-        grade,
-        teacher,
+        gradeId,
+        periodId,
         birthDate,
         picture,
-        period,
         institutionId,
-        responsible,
       });
     } catch (err) {
       return err.response;

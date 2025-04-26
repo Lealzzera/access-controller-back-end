@@ -1,7 +1,9 @@
-import { BadRequestException, Inject } from '@nestjs/common';
+import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { Child, Kinship } from '@prisma/client';
-import { RegisterResponsibleService } from 'src/modules/responsible/use-cases/register-responsible.service';
 import { IChildrenRepository } from '../repositories/interfaces/children-repository.interface';
+import { IInstitutionsRepository } from 'src/modules/institutions/repositories/interfaces/institutions-repository.interface';
+import { IPeriodRepository } from 'src/modules/period/repositories/interfaces/period-repository.interface';
+import { IGradeRepository } from 'src/modules/grade/repositories/interfaces/grade-repository.interface';
 
 export type ResponsibleData = {
   kinship: Kinship;
@@ -20,13 +22,11 @@ export type ResponsibleData = {
 type RegisterChildServiceRequest = {
   name: string;
   cpf: string;
-  grade?: string;
-  teacher?: string;
-  birthDate?: Date;
-  picture?: string;
-  period: 'MORNING' | 'AFTERNOON' | 'ALLDAY';
+  gradeId: string;
+  birthDate: Date;
+  picture: string;
+  periodId: string;
   institutionId: string;
-  responsible: ResponsibleData[];
 };
 
 type RegisterChildServiceResponse = {
@@ -37,70 +37,67 @@ export class RegisterService {
   constructor(
     @Inject('IChildrenRepository')
     private readonly childrenRepository: IChildrenRepository,
-    @Inject(RegisterResponsibleService)
-    private readonly registerResponsibleService: RegisterResponsibleService,
+    @Inject('IInstitutionsRepository')
+    private readonly institutionsRepository: IInstitutionsRepository,
+    @Inject('IPeriodRepository')
+    private readonly periodRepository: IPeriodRepository,
+    @Inject('IGradeRepository')
+    private readonly gradeRepository: IGradeRepository,
   ) {}
 
   async exec({
     name,
     cpf,
-    grade,
-    teacher,
+    gradeId,
+    periodId,
     birthDate,
     picture,
-    period,
     institutionId,
-    responsible,
   }: RegisterChildServiceRequest): Promise<RegisterChildServiceResponse> {
-    if (!institutionId.length) {
+    if (!institutionId.length || !periodId.length || !gradeId.length) {
       throw new BadRequestException('An institutionId must be provided');
     }
 
-    //TODO: IN THE FUTURE ADD PICTURE AS A MANDATORY DATA TO ADD.
-    if (!name.length || !cpf.length || !period.length) {
+    if (!name.length || !cpf.length || !birthDate || !picture.length) {
       throw new BadRequestException(
-        'Must to provide these following data, name, cpf and period',
+        'Must to provide these following data, (name, cpf, periodId, gradeId, birthDate, picture and institutionId)',
       );
     }
 
+    const doesInstitutionIdExist =
+      await this.institutionsRepository.findInstitutionById(institutionId);
+
+    const doesPeriodExist =
+      await this.periodRepository.findPeriodById(periodId);
+
+    const doesGradeExist = await this.gradeRepository.findGradeById(gradeId);
     const doesChildExist = await this.childrenRepository.findChildByCpf(cpf);
+
+    if (!doesInstitutionIdExist) {
+      throw new NotFoundException('Institution Id provided does not exist');
+    }
+
+    if (!doesPeriodExist) {
+      throw new NotFoundException('Period Id provided does not exist');
+    }
+
+    if (!doesGradeExist) {
+      throw new NotFoundException('Grade Id provided does not exist');
+    }
 
     if (doesChildExist) {
       throw new BadRequestException('Child CPF provided already exists.');
     }
 
-    if (!responsible.length) {
-      throw new BadRequestException(
-        'Its not allowed register a child without a responsible',
-      );
-    }
-
     const child = await this.childrenRepository.create({
       name,
       cpf,
-      grade,
-      teacher,
+      gradeId,
+      periodId,
       birthDate,
       picture,
-      period,
       institutionId,
     });
-
-    const responsibleList = responsible.map(
-      ({ kinship, name, email, password, cpf }) => {
-        this.registerResponsibleService.exec({
-          childId: child.id,
-          email,
-          institutionId,
-          password,
-          cpf,
-          name,
-          kinship,
-        });
-      },
-    );
-
-    await Promise.all(responsibleList);
 
     return { child };
   }

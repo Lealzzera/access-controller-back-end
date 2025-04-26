@@ -56,22 +56,20 @@ export class ChildrenRepository implements IChildrenRepository {
   async create({
     name,
     cpf,
-    grade,
-    teacher,
+    gradeId,
+    periodId,
     birthDate,
     picture,
-    period,
     institutionId,
   }: ICreateChildinterface): Promise<Child> {
     const child = await prisma.child.create({
       data: {
         name,
         cpf,
-        grade,
-        teacher,
+        gradeId,
+        periodId,
         birthDate,
         picture,
-        period,
         institutionId,
       },
     });
