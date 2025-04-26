@@ -17,16 +17,17 @@ model Child {
   id            String                  @id @default(uuid())
   name          String
   cpf           String                  @unique
-  grade         String?
-  teacher       String?
   birthDate     DateTime?               @db.Date
   picture       String?
-  period        Period
   createdAt     DateTime                @default(now())
   deletedAt     DateTime?
   responsible   ResponsibleOnChildren[]
-  institution   Institution?            @relation(fields: [institutionId], references: [id])
+  institution   Institution             @relation(fields: [institutionId], references: [id])
   institutionId String
+  period        Period?                 @relation(fields: [periodId], references: [id])
+  periodId      String?
+  Grade         Grade?                  @relation(fields: [gradeId], references: [id])
+  gradeId       String?
 
   @@map("children")
 }
@@ -82,6 +83,8 @@ model Institution {
   deletedAt    DateTime?
   responsibles ResponsibleOnInstitution[]
   role         Role
+  periods      Period[]
+  grades       Grade[]
 
   @@map("institutions")
 }
@@ -96,10 +99,29 @@ model ResponsibleOnInstitution {
   @@map("responsibleOnInstitution")
 }
 
-enum Period {
-  MORNING
-  AFTERNOON
-  ALLDAY
+model Period {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  children      Child[]
+  institutionId String
+
+  @@map("periods")
+}
+
+model Grade {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  children  Child[]
+
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  institutionId String
+
+  @@map("grades")
 }
 
 enum Role {
