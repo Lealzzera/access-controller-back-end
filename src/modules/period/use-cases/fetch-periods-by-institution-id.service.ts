@@ -1,7 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IPeriodRepository } from '../repositories/interfaces/period-repository.interface';
 import { IInstitutionsRepository } from 'src/modules/institutions/repositories/interfaces/institutions-repository.interface';
-import { Period } from '@prisma/client';
+
+type Period = {
+  id: string;
+  name: string;
+};
 
 type FetchPeriodsByInstitutionIdServiceRequest = {
   institutionId: string;
@@ -28,8 +32,12 @@ export class FetchPeriodsByInstitutionIdService {
       throw new NotFoundException('Institution id provided does not exist');
     }
 
-    const periods =
+    const periodsFromRepository =
       await this.periodRepository.fetchPeriodsByInstitutionId(institutionId);
+
+    const periods = periodsFromRepository.map((period) => {
+      return { id: period.id, name: period.name };
+    });
 
     return { periods };
   }
