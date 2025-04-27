@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserInfoModule } from './modules/userInfo/userInfo.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { DownLoadModule } from './modules/download/download.module';
+import { GradeModule } from './modules/grade/grade.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DownLoadModule } from './modules/download/download.module';
     UserInfoModule,
     UploadModule,
     DownLoadModule,
+    GradeModule,
   ],
 })
 export class AppModule {}
