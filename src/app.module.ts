@@ -8,6 +8,7 @@ import { UserInfoModule } from './modules/userInfo/userInfo.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { DownLoadModule } from './modules/download/download.module';
 import { GradeModule } from './modules/grade/grade.module';
+import { PeriodModule } from './modules/period/period.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { GradeModule } from './modules/grade/grade.module';
     UploadModule,
     DownLoadModule,
     GradeModule,
+    PeriodModule,
   ],
 })
 export class AppModule {}
