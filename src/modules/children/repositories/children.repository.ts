@@ -5,6 +5,7 @@ import {
   IChildrenRepository,
   ICreateChildinterface,
   IFetchChildrenByInstitutionId,
+  IUpdateChildInterface,
 } from './interfaces/children-repository.interface';
 
 export class ChildrenRepository implements IChildrenRepository {
@@ -71,6 +72,28 @@ export class ChildrenRepository implements IChildrenRepository {
         birthDate,
         picture,
         institutionId,
+      },
+    });
+
+    return child;
+  }
+
+  async update({
+    id,
+    gradeId,
+    institutionId,
+    name,
+    periodId,
+    picture,
+  }: IUpdateChildInterface): Promise<Child> {
+    const child = await prisma.child.update({
+      where: { id },
+      data: {
+        gradeId: gradeId || undefined,
+        institutionId: institutionId || undefined,
+        name: name || undefined,
+        periodId: periodId || undefined,
+        picture: picture || undefined,
       },
     });
 

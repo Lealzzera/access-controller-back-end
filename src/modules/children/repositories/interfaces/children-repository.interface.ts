@@ -16,6 +16,15 @@ export interface IFetchChildrenByInstitutionId {
   limit?: number;
 }
 
+export interface IUpdateChildInterface {
+  id: string;
+  name?: string;
+  gradeId?: string;
+  periodId?: string;
+  picture?: string;
+  institutionId?: string;
+}
+
 export interface IChildrenRepository {
   findChildrenByIds(id: string[]): Promise<Child[] | null>;
   findChildrenByInstitutionId({
@@ -34,4 +43,12 @@ export interface IChildrenRepository {
     picture,
     institutionId,
   }: ICreateChildinterface): Promise<Child>;
+  update({
+    id,
+    gradeId,
+    institutionId,
+    name,
+    periodId,
+    picture,
+  }: IUpdateChildInterface): Promise<Child>;
 }
