@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -14,6 +15,8 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { Role } from 'src/decorators/role.decorator';
 import { FetchChildrenByInstitutionIdService } from './use-cases/fetch-children-by-institution-id.service';
 import { FetchChildrenByResponsibleIdService } from './use-cases/fetch-children-by-responsible-id.service';
+import { UpdateChildService } from './use-cases/update-child.service';
+import { UpdateChildDTO } from './update-child.dto';
 
 @Controller({
   path: 'children',
@@ -25,6 +28,7 @@ export class ChildrenController {
     private readonly registerService: RegisterService,
     private readonly fetchChildrenByInstitutionIdService: FetchChildrenByInstitutionIdService,
     private readonly fetchChildrenByResponsibleIdService: FetchChildrenByResponsibleIdService,
+    private readonly updateChildService: UpdateChildService,
   ) {}
 
   @Post('/register')
@@ -89,5 +93,23 @@ export class ChildrenController {
     } catch (err) {
       return err.response;
     }
+  }
+
+  @Patch('/:id')
+  @Role('INSTITUTION')
+  async updateChildren(
+    @Param('id') id: string,
+    @Body() { gradeId, institutionId, name, periodId, picture }: UpdateChildDTO,
+  ) {
+    const { child } = await this.updateChildService.exec({
+      id,
+      gradeId,
+      institutionId,
+      name,
+      periodId,
+      picture,
+    });
+
+    return child;
   }
 }

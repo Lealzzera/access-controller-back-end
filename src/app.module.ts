@@ -5,6 +5,8 @@ import { InstitutionsModule } from './modules/institutions/institutions.module';
 import { ResponsibleModule } from './modules/responsible/responsible.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserInfoModule } from './modules/userInfo/userInfo.module';
+import { UploadModule } from './modules/upload/upload.module';
+import { DownLoadModule } from './modules/download/download.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { UserInfoModule } from './modules/userInfo/userInfo.module';
     ResponsibleModule,
     AuthModule,
     UserInfoModule,
+    UploadModule,
+    DownLoadModule,
   ],
 })
 export class AppModule {}
