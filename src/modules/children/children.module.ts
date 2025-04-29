@@ -10,6 +10,7 @@ import { FetchChildrenByResponsibleIdService } from './use-cases/fetch-children-
 import { PeriodRepository } from '../period/repositories/period-repository';
 import { GradeRepository } from '../grade/repositories/grade-repository';
 import { UpdateChildService } from './use-cases/update-child.service';
+import { ResponsibleRepository } from '../responsible/repositories/responsible.repository';
 
 @Module({
   providers: [
@@ -26,6 +27,7 @@ import { UpdateChildService } from './use-cases/update-child.service';
       provide: 'IResponsibleOnChildrenRepository',
       useClass: ResponsibleOnChildrenRepository,
     },
+    { provide: 'IResponsibleRepository', useClass: ResponsibleRepository },
   ],
   controllers: [ChildrenController],
 })
