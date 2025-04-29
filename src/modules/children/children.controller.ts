@@ -47,7 +47,7 @@ export class ChildrenController {
     }: RegisterChildDTO,
   ) {
     try {
-      await this.registerService.exec({
+      const child = await this.registerService.exec({
         name,
         cpf,
         gradeId,
@@ -56,6 +56,7 @@ export class ChildrenController {
         picture,
         institutionId,
       });
+      return child;
     } catch (err) {
       return err.response;
     }

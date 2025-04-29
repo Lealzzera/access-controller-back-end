@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class RegisterChildDTO {
   @IsString()
@@ -19,7 +19,8 @@ export class RegisterChildDTO {
   birthDate: Date;
 
   @IsString()
-  picture: string;
+  @IsOptional()
+  picture?: string;
 
   @IsString()
   institutionId: string;

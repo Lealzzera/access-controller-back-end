@@ -5,26 +5,12 @@ import { IInstitutionsRepository } from 'src/modules/institutions/repositories/i
 import { IPeriodRepository } from 'src/modules/period/repositories/interfaces/period-repository.interface';
 import { IGradeRepository } from 'src/modules/grade/repositories/interfaces/grade-repository.interface';
 
-export type ResponsibleData = {
-  kinship: Kinship;
-  name: string;
-  email: string;
-  password: string;
-  street?: string;
-  neighborhood?: string;
-  city?: string;
-  cpf: string;
-  state?: string;
-  cep?: string;
-  picture?: string;
-};
-
 type RegisterChildServiceRequest = {
   name: string;
   cpf: string;
   gradeId: string;
   birthDate: Date;
-  picture: string;
+  picture?: string;
   periodId: string;
   institutionId: string;
 };
@@ -58,9 +44,9 @@ export class RegisterService {
       throw new BadRequestException('An institutionId must be provided');
     }
 
-    if (!name.length || !cpf.length || !birthDate || !picture.length) {
+    if (!name.length || !cpf.length || !birthDate) {
       throw new BadRequestException(
-        'Must to provide these following data, (name, cpf, periodId, gradeId, birthDate, picture and institutionId)',
+        'Must to provide these following data, (name, cpf, periodId, gradeId, birthDate and institutionId)',
       );
     }
 
