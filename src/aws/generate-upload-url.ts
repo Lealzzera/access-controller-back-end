@@ -3,6 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3 } from './s3-client';
 
 export async function generateUploadURL(fileName: string, fileType: string) {
+  if(!process.env.AWS_BUCKET_NAME) return 'AWS Bucket is missing'
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
