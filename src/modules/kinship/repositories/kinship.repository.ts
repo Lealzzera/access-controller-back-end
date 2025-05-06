@@ -1,10 +1,9 @@
 import { Kinship } from '@prisma/client';
-import KinshipRepositoryInterface, {
-  CreateKinship,
-} from './interfaces/kinship-repository.interface';
+import { CreateKinship } from './interfaces/kinship-repository.interface';
 import { prisma } from 'src/prisma/prisma-client';
+import IKinshipRepository from './interfaces/kinship-repository.interface';
 
-export default class KinshipRepository implements KinshipRepositoryInterface {
+export default class KinshipRepository implements IKinshipRepository {
   async fetchAllKinship(): Promise<Kinship[]> {
     const kinshipList = await prisma.kinship.findMany({
       orderBy: {
@@ -14,13 +13,15 @@ export default class KinshipRepository implements KinshipRepositoryInterface {
 
     return kinshipList;
   }
-  async create({ name, value }: CreateKinship): Promise<void> {
-    await prisma.kinship.create({
+  async create({ name, value }: CreateKinship): Promise<Kinship> {
+    const kinship = await prisma.kinship.create({
       data: {
         name,
         value,
       },
     });
+
+    return kinship;
   }
   async fetchKinshipById(id: string): Promise<Kinship | null> {
     const kinship = await prisma.kinship.findFirst({
