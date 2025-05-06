@@ -9,6 +9,7 @@ import { UploadModule } from './modules/upload/upload.module';
 import { DownLoadModule } from './modules/download/download.module';
 import { GradeModule } from './modules/grade/grade.module';
 import { PeriodModule } from './modules/period/period.module';
+import { KinshipModule } from './modules/kinship/kinship.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PeriodModule } from './modules/period/period.module';
     DownLoadModule,
     GradeModule,
     PeriodModule,
+    KinshipModule,
   ],
 })
 export class AppModule {}

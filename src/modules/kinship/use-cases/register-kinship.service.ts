@@ -33,7 +33,10 @@ export default class RegisterKinshipService {
       );
     }
 
-    const kinship = await this.kinshipRepository.create({ name, value });
+    const kinship = await this.kinshipRepository.create({
+      name: name.toUpperCase(),
+      value,
+    });
 
     return { kinship };
   }

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import IKinshipRepository from '../repositories/interfaces/kinship-repository.interface';
 import { Kinship } from '@prisma/client';
 
-interface FetchAllKinshipServiceResponse {
+export interface FetchAllKinshipServiceResponse {
   kinships: Kinship[];
 }
 
