@@ -1,7 +1,5 @@
-import { Kinship } from '@prisma/client';
 import {
   IsEmail,
-  IsEnum,
   IsOptional,
   IsString,
   IsStrongPassword,
@@ -56,9 +54,4 @@ export class CreateResponsibleDTO {
   @IsString()
   @IsOptional()
   cpf: string;
-
-  @IsEnum(Kinship, {
-    message: 'Provide a valid kinship.',
-  })
-  kinship: Kinship;
 }

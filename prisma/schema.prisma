@@ -53,18 +53,6 @@ model Responsible {
   @@map("responsible")
 }
 
-model ResponsibleOnChildren {
-  childId       String
-  responsibleId String
-  kinship       Kinship
-  notAllowed    Boolean?
-  child         Child       @relation(fields: [childId], references: [id])
-  responsible   Responsible @relation(fields: [responsibleId], references: [id])
-
-  @@id([childId, responsibleId])
-  @@map("responsibleOnChildren")
-}
-
 model Institution {
   id           String                     @id @default(uuid())
   cnpj         String?                    @unique
@@ -87,16 +75,6 @@ model Institution {
   grades       Grade[]
 
   @@map("institutions")
-}
-
-model ResponsibleOnInstitution {
-  institutionId String
-  responsibleId String
-  institution   Institution @relation(fields: [institutionId], references: [id])
-  responsible   Responsible @relation(fields: [responsibleId], references: [id])
-
-  @@id([institutionId, responsibleId])
-  @@map("responsibleOnInstitution")
 }
 
 model Period {
@@ -124,22 +102,40 @@ model Grade {
   @@map("grades")
 }
 
+model Kinship {
+  id           String                  @id @default(uuid())
+  name         String                  @unique
+  value        String                  @unique
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  responsibles ResponsibleOnChildren[]
+}
+
+model ResponsibleOnChildren {
+  childId       String
+  responsibleId String
+  kinshipId     String?
+  notAllowed    Boolean?
+
+  child       Child       @relation(fields: [childId], references: [id])
+  responsible Responsible @relation(fields: [responsibleId], references: [id])
+  kinship     Kinship?    @relation(fields: [kinshipId], references: [id])
+
+  @@id([childId, responsibleId])
+  @@map("responsibleOnChildren")
+}
+
+model ResponsibleOnInstitution {
+  institutionId String
+  responsibleId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  responsible   Responsible @relation(fields: [responsibleId], references: [id])
+
+  @@id([institutionId, responsibleId])
+  @@map("responsibleOnInstitution")
+}
+
 enum Role {
   INSTITUTION
   RESPONSIBLE
-}
-
-enum Kinship {
-  MOTHER
-  FATHER
-  UNCLE
-  AUNT
-  GRANDPARENT
-  BROTHER
-  SISTER
-  STEPPARENT
-  COUSIN
-  GUARDIAN
-  GODPARENT
-  OTHER
 }

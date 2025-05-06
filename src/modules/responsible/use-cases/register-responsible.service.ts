@@ -1,6 +1,6 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
-import { Kinship, Responsible } from '@prisma/client';
+import { Responsible } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-children/repositories/interfaces/responsible-on-children-repository.interface';
 import { IResponsibleOnInstitutionRepository } from 'src/modules/responsible-on-institution/repositories/interfaces/responsible-on-institution-repository.interface';
@@ -9,7 +9,6 @@ import { IChildrenRepository } from 'src/modules/children/repositories/interface
 type RegisterResponsibleServiceRequest = {
   institutionId: string;
   childId: string;
-  kinship: Kinship;
   name: string;
   email: string;
   password: string;
@@ -41,7 +40,6 @@ export class RegisterResponsibleService {
   async exec({
     institutionId,
     childId,
-    kinship,
     name,
     email,
     password,
@@ -86,7 +84,6 @@ export class RegisterResponsibleService {
         await this.responsibleOnChildrenRepository.create({
           childId,
           responsibleId: doesResponsibleAlreadyExist.id,
-          kinship,
         });
 
         return { responsible: doesResponsibleAlreadyExist };
@@ -95,7 +92,6 @@ export class RegisterResponsibleService {
       await this.responsibleOnChildrenRepository.create({
         childId,
         responsibleId: doesResponsibleAlreadyExist.id,
-        kinship,
       });
 
       await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
@@ -124,7 +120,6 @@ export class RegisterResponsibleService {
       this.responsibleOnChildrenRepository.create({
         childId,
         responsibleId: responsible.id,
-        kinship,
       }),
 
       this.responsibleOnInstitutionRepository.createResponsibleOnInstitution({
