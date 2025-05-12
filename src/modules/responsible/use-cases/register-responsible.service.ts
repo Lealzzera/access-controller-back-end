@@ -62,6 +62,14 @@ export class RegisterResponsibleService {
       throw new BadRequestException('CPF provided already exists.');
     }
 
+    const isThisCpfFromAChild =
+      await this.childrenRepository.findChildByCpf(cpf);
+    if (isThisCpfFromAChild) {
+      throw new BadRequestException(
+        'CPF from a child is not allowed to register',
+      );
+    }
+
     const doesResponsibleAlreadyExist =
       await this.responsibleRepository.findResponsibleByEmail(email);
 
