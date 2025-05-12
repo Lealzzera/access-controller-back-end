@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { RegisterResponsibleService } from './use-cases/register-responsible.service';
 import { CreateResponsibleDTO } from './create-responsible.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -33,30 +25,23 @@ export class ResponsibleController {
       name,
       email,
       password,
-      street,
-      neighborhood,
-      city,
-      state,
-      cep,
       picture,
       cpf,
+      kinshipId,
     }: CreateResponsibleDTO,
   ) {
     try {
-      await this.registerResponsibleService.exec({
+      const { responsible } = await this.registerResponsibleService.exec({
         institutionId,
         childId,
         name,
         email,
         password,
-        street,
-        neighborhood,
-        city,
-        state,
-        cep,
         picture,
         cpf,
+        kinshipId,
       });
+      return { responsible };
     } catch (err) {
       return err.response;
     }

@@ -6,6 +6,7 @@ import { ResponsibleOnInstitutionRepository } from '../responsible-on-institutio
 import { ResponsibleController } from './responsible.controller';
 import { ChildrenRepository } from '../children/repositories/children.repository';
 import { GetResponsibleDataService } from './use-cases/get-responsible-data.service';
+import { InstitutionsRepository } from '../institutions/repositories/institutions.repository';
 
 @Module({
   providers: [
@@ -21,6 +22,7 @@ import { GetResponsibleDataService } from './use-cases/get-responsible-data.serv
       useClass: ResponsibleOnInstitutionRepository,
     },
     { provide: 'IChildrenRepository', useClass: ChildrenRepository },
+    { provide: 'IInstitutionsRepository', useClass: InstitutionsRepository },
   ],
   exports: [RegisterResponsibleService],
   controllers: [ResponsibleController],

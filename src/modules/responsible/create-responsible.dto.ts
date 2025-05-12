@@ -29,29 +29,12 @@ export class CreateResponsibleDTO {
 
   @IsString()
   @IsOptional()
-  street: string;
-
-  @IsString()
-  @IsOptional()
-  neighborhood: string;
-
-  @IsString()
-  @IsOptional()
-  city: string;
-
-  @IsString()
-  @IsOptional()
-  state: string;
-
-  @IsString()
-  @IsOptional()
-  cep: string;
-
-  @IsString()
-  @IsOptional()
   picture: string;
 
   @IsString()
   @IsOptional()
   cpf: string;
+
+  @IsString()
+  kinshipId: string;
 }

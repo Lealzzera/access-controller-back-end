@@ -3,6 +3,7 @@ import { ResponsibleOnChildren } from '@prisma/client';
 export interface ICreateResponsibleOnChildren {
   childId: string;
   responsibleId: string;
+  kinshipId: string;
 }
 
 export interface IFindResponsibleOnChildrenById {
@@ -17,6 +18,7 @@ export interface IResponsibleOnChildrenRepository {
   create({
     childId,
     responsibleId,
+    kinshipId,
   }: ICreateResponsibleOnChildren): Promise<ResponsibleOnChildren>;
 
   findResponsibleOnChildrenById({

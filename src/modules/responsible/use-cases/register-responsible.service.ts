@@ -5,6 +5,7 @@ import { hash } from 'bcrypt';
 import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-children/repositories/interfaces/responsible-on-children-repository.interface';
 import { IResponsibleOnInstitutionRepository } from 'src/modules/responsible-on-institution/repositories/interfaces/responsible-on-institution-repository.interface';
 import { IChildrenRepository } from 'src/modules/children/repositories/interfaces/children-repository.interface';
+import { IInstitutionsRepository } from 'src/modules/institutions/repositories/interfaces/institutions-repository.interface';
 
 type RegisterResponsibleServiceRequest = {
   institutionId: string;
@@ -12,13 +13,9 @@ type RegisterResponsibleServiceRequest = {
   name: string;
   email: string;
   password: string;
-  street?: string;
-  neighborhood?: string;
-  city?: string;
-  state?: string;
-  cep?: string;
   picture?: string;
   cpf?: string;
+  kinshipId: string;
 };
 
 type RegisterResponsibleServiceResponse = {
@@ -35,6 +32,8 @@ export class RegisterResponsibleService {
     private readonly responsibleOnInstitutionRepository: IResponsibleOnInstitutionRepository,
     @Inject('IChildrenRepository')
     private readonly childrenRepository: IChildrenRepository,
+    @Inject('IInstitutionsRepository')
+    private readonly institutionRepository: IInstitutionsRepository,
   ) {}
 
   async exec({
@@ -43,14 +42,26 @@ export class RegisterResponsibleService {
     name,
     email,
     password,
-    street,
-    neighborhood,
-    city,
-    state,
-    cep,
     picture,
+    kinshipId,
     cpf,
   }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse> {
+    const doesTheEmailAlreadyExist =
+      await this.institutionRepository.findInstitutionByEmail(email);
+
+    if (doesTheEmailAlreadyExist) {
+      throw new BadRequestException(
+        'Email provided already exists as an institution',
+      );
+    }
+
+    const doesTheCpfAlreadyExist =
+      await this.responsibleRepository.findResponsibleByCpf(cpf);
+
+    if (doesTheCpfAlreadyExist) {
+      throw new BadRequestException('CPF provided already exists.');
+    }
+
     const doesResponsibleAlreadyExist =
       await this.responsibleRepository.findResponsibleByEmail(email);
 
@@ -84,6 +95,7 @@ export class RegisterResponsibleService {
         await this.responsibleOnChildrenRepository.create({
           childId,
           responsibleId: doesResponsibleAlreadyExist.id,
+          kinshipId,
         });
 
         return { responsible: doesResponsibleAlreadyExist };
@@ -92,6 +104,7 @@ export class RegisterResponsibleService {
       await this.responsibleOnChildrenRepository.create({
         childId,
         responsibleId: doesResponsibleAlreadyExist.id,
+        kinshipId,
       });
 
       await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
@@ -106,12 +119,7 @@ export class RegisterResponsibleService {
       email,
       name,
       password: passwordHashed,
-      cep,
-      city,
-      neighborhood,
       picture,
-      state,
-      street,
       cpf,
       role: 'RESPONSIBLE',
     });
@@ -120,6 +128,7 @@ export class RegisterResponsibleService {
       this.responsibleOnChildrenRepository.create({
         childId,
         responsibleId: responsible.id,
+        kinshipId,
       }),
 
       this.responsibleOnInstitutionRepository.createResponsibleOnInstitution({

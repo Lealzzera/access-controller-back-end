@@ -37,11 +37,13 @@ export class ResponsibleOnChildrenRepository
   async create({
     childId,
     responsibleId,
+    kinshipId,
   }: ICreateResponsibleOnChildren): Promise<ResponsibleOnChildren> {
     const responsibleOnChildren = await prisma.responsibleOnChildren.create({
       data: {
         childId,
         responsibleId,
+        kinshipId,
       },
     });
 
