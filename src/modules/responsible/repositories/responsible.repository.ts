@@ -2,10 +2,29 @@ import { Responsible } from '@prisma/client';
 import {
   ICreateResponsible,
   IResponsibleRepository,
+  IUpdateResponsible,
 } from './interfaces/responsible-repository.interface';
 import { prisma } from 'src/prisma/prisma-client';
 
 export class ResponsibleRepository implements IResponsibleRepository {
+  async update({
+    id,
+    name,
+    password,
+    picture,
+  }: IUpdateResponsible): Promise<Responsible> {
+    const responsible = await prisma.responsible.update({
+      where: { id },
+      data: {
+        name,
+        password,
+        picture,
+      },
+    });
+
+    return responsible;
+  }
+
   async findResponsibleByCpf(cpf: string): Promise<Responsible | null> {
     const resopnsible = await prisma.responsible.findFirst({
       where: {

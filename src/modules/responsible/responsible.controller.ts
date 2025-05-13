@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { RegisterResponsibleService } from './use-cases/register-responsible.service';
 import { CreateResponsibleDTO } from './create-responsible.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Role } from 'src/decorators/role.decorator';
 import { GetResponsibleDataService } from './use-cases/get-responsible-data.service';
+import { UpdateResponsibleDTO } from './update-responsible.dto';
+import { UpdateResponsibleService } from './use-cases/update-responsible.service';
 
 @UseGuards(AuthGuard)
 @Controller({
@@ -14,6 +24,7 @@ export class ResponsibleController {
   constructor(
     private readonly registerResponsibleService: RegisterResponsibleService,
     private readonly getResponsibleDataService: GetResponsibleDataService,
+    private readonly updateResponsibleService: UpdateResponsibleService,
   ) {}
   @Post('/register')
   @Role('INSTITUTION')
@@ -46,6 +57,7 @@ export class ResponsibleController {
       return err.response;
     }
   }
+
   @Get('/:responsibleId')
   async getResponsibleData(@Param('responsibleId') responsibleId: string) {
     try {
@@ -56,5 +68,21 @@ export class ResponsibleController {
     } catch (err) {
       return err.response;
     }
+  }
+
+  @Patch('/:id')
+  @Role('INSTITUTION')
+  async updateChildren(
+    @Param('id') id: string,
+    @Body() { name, picture, password }: UpdateResponsibleDTO,
+  ) {
+    const { responsible } = await this.updateResponsibleService.exec({
+      id,
+      name,
+      picture,
+      password,
+    });
+
+    return responsible;
   }
 }

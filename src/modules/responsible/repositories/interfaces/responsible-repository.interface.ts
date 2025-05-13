@@ -9,7 +9,20 @@ export interface ICreateResponsible {
   role: Role;
 }
 
+export interface IUpdateResponsible {
+  id: string;
+  name: string;
+  password: string;
+  picture: string;
+}
+
 export interface IResponsibleRepository {
+  update({
+    id,
+    name,
+    password,
+    picture,
+  }: IUpdateResponsible): Promise<Responsible>;
   findResponsibleByEmail(email: string): Promise<Responsible | null>;
   findResponsibleByCpf(cpf: string): Promise<Responsible | null>;
   findResponsibleById(id: string): Promise<Responsible | null>;

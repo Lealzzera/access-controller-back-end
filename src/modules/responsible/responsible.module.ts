@@ -7,9 +7,11 @@ import { ResponsibleController } from './responsible.controller';
 import { ChildrenRepository } from '../children/repositories/children.repository';
 import { GetResponsibleDataService } from './use-cases/get-responsible-data.service';
 import { InstitutionsRepository } from '../institutions/repositories/institutions.repository';
+import { UpdateResponsibleService } from './use-cases/update-responsible.service';
 
 @Module({
   providers: [
+    UpdateResponsibleService,
     RegisterResponsibleService,
     GetResponsibleDataService,
     { provide: 'IResponsibleRepository', useClass: ResponsibleRepository },
