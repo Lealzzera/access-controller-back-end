@@ -1,4 +1,9 @@
-import { BadRequestException, Inject } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
 import { Responsible } from '@prisma/client';
 import { hash } from 'bcrypt';
@@ -46,80 +51,85 @@ export class RegisterResponsibleService {
     kinshipId,
     cpf,
   }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse> {
-    const doesTheEmailAlreadyExist =
+    const emailExistAsAnInstitution =
       await this.institutionRepository.findInstitutionByEmail(email);
-
-    if (doesTheEmailAlreadyExist) {
-      throw new BadRequestException(
-        'Email provided already exists as an institution',
+    if (emailExistAsAnInstitution) {
+      throw new NotAcceptableException(
+        'Email provided already exists as an institution.',
       );
     }
 
-    const doesTheCpfAlreadyExist =
+    const cpfExistAsChildCpf =
+      await this.childrenRepository.findChildByCpf(cpf);
+    if (cpfExistAsChildCpf) {
+      throw new NotAcceptableException(
+        'CPF from a child is not allowed to register as a responsible.',
+      );
+    }
+
+    const childIdExists = this.childrenRepository.findChildById(childId);
+
+    if (!childIdExists) {
+      throw new NotFoundException('Child Id provided does not exist.');
+    }
+
+    const emailAlreadyExist =
+      await this.responsibleRepository.findResponsibleByEmail(email);
+    const cpfAlreadyExist =
       await this.responsibleRepository.findResponsibleByCpf(cpf);
 
-    if (doesTheCpfAlreadyExist) {
-      throw new BadRequestException('CPF provided already exists.');
-    }
-
-    const isThisCpfFromAChild =
-      await this.childrenRepository.findChildByCpf(cpf);
-    if (isThisCpfFromAChild) {
+    if (!emailAlreadyExist && cpfAlreadyExist) {
       throw new BadRequestException(
-        'CPF from a child is not allowed to register',
+        'CPF provided is already linked to other email address.',
       );
     }
 
-    const doesResponsibleAlreadyExist =
-      await this.responsibleRepository.findResponsibleByEmail(email);
-
-    const doesChildExist = await this.childrenRepository.findChildById(childId);
-
-    if (!doesChildExist) {
-      throw new BadRequestException('Child Id provided does not exist.');
+    if (emailAlreadyExist && !cpfAlreadyExist) {
+      throw new BadRequestException(
+        'Email provided is already linked to other CPF.',
+      );
     }
 
-    if (doesResponsibleAlreadyExist) {
-      const isResponsibleLinkedToChild =
+    if (emailAlreadyExist && cpfAlreadyExist) {
+      const isUserLinkedToThisChild =
         await this.responsibleOnChildrenRepository.findResponsibleOnChildrenById(
-          { childId, responsibleId: doesResponsibleAlreadyExist.id },
+          { childId, responsibleId: cpfAlreadyExist.id },
         );
 
-      if (isResponsibleLinkedToChild) {
-        throw new BadRequestException(
-          'This responsible is already linked to this child',
+      if (isUserLinkedToThisChild) {
+        throw new NotAcceptableException(
+          'This responsible is already linked to this child.',
         );
       }
 
-      const isResponsibleLinkedToInstitution =
+      const isUserLinkedToThisInstitution =
         await this.responsibleOnInstitutionRepository.findResponsibleOnInstitutionById(
-          {
-            institutionId,
-            responsibleId: doesResponsibleAlreadyExist.id,
-          },
+          { institutionId, responsibleId: cpfAlreadyExist.id },
         );
 
-      if (isResponsibleLinkedToInstitution) {
+      if (isUserLinkedToThisInstitution) {
         await this.responsibleOnChildrenRepository.create({
           childId,
-          responsibleId: doesResponsibleAlreadyExist.id,
+          responsibleId: cpfAlreadyExist.id,
           kinshipId,
         });
 
-        return { responsible: doesResponsibleAlreadyExist };
+        return { responsible: cpfAlreadyExist };
       }
 
-      await this.responsibleOnChildrenRepository.create({
-        childId,
-        responsibleId: doesResponsibleAlreadyExist.id,
-        kinshipId,
-      });
+      await Promise.all([
+        this.responsibleOnInstitutionRepository.createResponsibleOnInstitution({
+          responsibleId: cpfAlreadyExist.id,
+          institutionId,
+        }),
+        this.responsibleOnChildrenRepository.create({
+          childId,
+          responsibleId: cpfAlreadyExist.id,
+          kinshipId,
+        }),
+      ]);
 
-      await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
-        { institutionId, responsibleId: doesResponsibleAlreadyExist.id },
-      );
-
-      return { responsible: doesResponsibleAlreadyExist };
+      return { responsible: cpfAlreadyExist };
     }
 
     const passwordHashed = await hash(password, 6);
