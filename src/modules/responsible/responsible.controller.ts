@@ -89,7 +89,6 @@ export class ResponsibleController {
   }
 
   @Get('/by-child-id/:childId')
-  @Role('INSTITUTION')
   async getResponsibleList(@Param('childId') childId: string) {
     try {
       const responsible = await this.getResponsiblesService.exec(childId);
