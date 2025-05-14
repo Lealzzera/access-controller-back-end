@@ -12,6 +12,9 @@ export interface IFindResponsibleOnChildrenById {
 }
 
 export interface IResponsibleOnChildrenRepository {
+  findResponsibleListByChildId(
+    childId: string,
+  ): Promise<ResponsibleOnChildren[] | []>;
   findChildListByResponsibleId(
     responsibleId: string,
   ): Promise<ResponsibleOnChildren[] | null>;

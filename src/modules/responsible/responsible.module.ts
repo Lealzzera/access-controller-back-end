@@ -8,12 +8,16 @@ import { ChildrenRepository } from '../children/repositories/children.repository
 import { GetResponsibleDataService } from './use-cases/get-responsible-data.service';
 import { InstitutionsRepository } from '../institutions/repositories/institutions.repository';
 import { UpdateResponsibleService } from './use-cases/update-responsible.service';
+import { GetResponsiblesService } from './use-cases/get-responsibles.service';
+import KinshipRepository from '../kinship/repositories/kinship.repository';
 
 @Module({
   providers: [
+    GetResponsiblesService,
     UpdateResponsibleService,
     RegisterResponsibleService,
     GetResponsibleDataService,
+    { provide: 'IKinshipRepository', useClass: KinshipRepository },
     { provide: 'IResponsibleRepository', useClass: ResponsibleRepository },
     {
       provide: 'IResponsibleOnChildrenRepository',

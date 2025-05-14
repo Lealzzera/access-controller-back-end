@@ -7,6 +7,16 @@ import {
 import { prisma } from 'src/prisma/prisma-client';
 
 export class ResponsibleRepository implements IResponsibleRepository {
+  async findResponsiblesByIds(ids: string[]): Promise<Responsible[] | []> {
+    const responsible = await prisma.responsible.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    return responsible;
+  }
+
   async update({
     id,
     name,

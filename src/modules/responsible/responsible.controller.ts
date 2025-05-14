@@ -14,6 +14,7 @@ import { Role } from 'src/decorators/role.decorator';
 import { GetResponsibleDataService } from './use-cases/get-responsible-data.service';
 import { UpdateResponsibleDTO } from './update-responsible.dto';
 import { UpdateResponsibleService } from './use-cases/update-responsible.service';
+import { GetResponsiblesService } from './use-cases/get-responsibles.service';
 
 @UseGuards(AuthGuard)
 @Controller({
@@ -25,6 +26,7 @@ export class ResponsibleController {
     private readonly registerResponsibleService: RegisterResponsibleService,
     private readonly getResponsibleDataService: GetResponsibleDataService,
     private readonly updateResponsibleService: UpdateResponsibleService,
+    private readonly getResponsiblesService: GetResponsiblesService,
   ) {}
   @Post('/register')
   @Role('INSTITUTION')
@@ -84,5 +86,17 @@ export class ResponsibleController {
     });
 
     return responsible;
+  }
+
+  @Get('/by-child-id/:childId')
+  @Role('INSTITUTION')
+  async getResponsibleList(@Param('childId') childId: string) {
+    try {
+      const responsible = await this.getResponsiblesService.exec(childId);
+
+      return responsible;
+    } catch (err) {
+      return err.response;
+    }
   }
 }

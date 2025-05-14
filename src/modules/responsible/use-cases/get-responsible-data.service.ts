@@ -1,11 +1,11 @@
 import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
 
-type RegisterResponsibleServiceRequest = {
+type GetResponsibleDataServiceRequest = {
   responsibleId: string;
 };
 
-type RegisterResponsibleServiceResponse = {
+type GetResponsibleDataServiceResponse = {
   name: string;
   email: string;
   cpf: string;
@@ -25,7 +25,7 @@ export class GetResponsibleDataService {
 
   async exec({
     responsibleId,
-  }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse | null> {
+  }: GetResponsibleDataServiceRequest): Promise<GetResponsibleDataServiceResponse | null> {
     if (!responsibleId.length) {
       throw new BadRequestException('Must to provide a responsibleId');
     }

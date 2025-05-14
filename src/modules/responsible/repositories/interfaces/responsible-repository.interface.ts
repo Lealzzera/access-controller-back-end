@@ -17,6 +17,7 @@ export interface IUpdateResponsible {
 }
 
 export interface IResponsibleRepository {
+  findResponsiblesByIds(ids: string[]): Promise<Responsible[] | []>;
   update({
     id,
     name,
