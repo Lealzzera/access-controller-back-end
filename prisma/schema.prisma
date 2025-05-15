@@ -28,6 +28,7 @@ model Child {
   periodId      String?
   Grade         Grade?                  @relation(fields: [gradeId], references: [id])
   gradeId       String?
+  isPresent     Boolean?                @default(false)
 
   @@map("children")
 }

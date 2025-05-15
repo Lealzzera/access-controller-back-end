@@ -15,6 +15,7 @@ type Child = {
   institutionId: string;
   period: { id: string; name: string };
   grade: { id: string; name: string };
+  isPresent: boolean;
 };
 
 type FetchChildrenByInstitutionIdServiceRequest = {
@@ -78,6 +79,7 @@ export class FetchChildrenByInstitutionIdService {
           institutionId: child.institutionId,
           period: period,
           grade: grade,
+          isPresent: child.isPresent,
         };
       }),
     );
