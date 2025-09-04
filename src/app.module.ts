@@ -5,11 +5,10 @@ import { InstitutionsModule } from './modules/institutions/institutions.module';
 import { ResponsibleModule } from './modules/responsible/responsible.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserInfoModule } from './modules/userInfo/userInfo.module';
-import { UploadModule } from './modules/upload/upload.module';
-import { DownLoadModule } from './modules/download/download.module';
 import { GradeModule } from './modules/grade/grade.module';
 import { PeriodModule } from './modules/period/period.module';
 import { KinshipModule } from './modules/kinship/kinship.module';
+import { S3Module } from './aws/s3/s3.module';
 
 @Module({
   imports: [
@@ -22,11 +21,10 @@ import { KinshipModule } from './modules/kinship/kinship.module';
     ResponsibleModule,
     AuthModule,
     UserInfoModule,
-    UploadModule,
-    DownLoadModule,
     GradeModule,
     PeriodModule,
     KinshipModule,
+    S3Module,
   ],
 })
 export class AppModule {}
