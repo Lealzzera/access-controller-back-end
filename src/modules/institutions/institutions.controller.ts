@@ -13,50 +13,12 @@ export class InstitutionController {
     private readonly getInstitutionByIdService: GetInstitutionByIdService,
   ) {}
   @Post('/register')
-  async register(
-    @Body()
-    {
-      name,
-      email,
-      cep,
-      city,
-      cnpj,
-      neighborhood,
-      password,
-      picture,
-      responsible,
-      state,
-      street,
-    }: RegisterInstitutionDTO,
-  ) {
-    try {
-      await this.registerInstitutionService.exec({
-        name,
-        email,
-        cep,
-        city,
-        cnpj,
-        neighborhood,
-        password,
-        picture,
-        responsible,
-        state,
-        street,
-      });
-    } catch (err) {
-      return err.response;
-    }
+  async register(@Body() body: RegisterInstitutionDTO) {
+    await this.registerInstitutionService.exec(body);
   }
 
   @Get('/:institutionId')
   async getInstitutionById(@Param('institutionId') institutionId: string) {
-    try {
-      const institution = await this.getInstitutionByIdService.exec({
-        institutionId,
-      });
-      return institution;
-    } catch (err) {
-      return err.response;
-    }
+    return this.getInstitutionByIdService.exec({ institutionId });
   }
 }

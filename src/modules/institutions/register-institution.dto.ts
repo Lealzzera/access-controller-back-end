@@ -1,10 +1,18 @@
-import { IsOptional, IsString, IsStrongPassword } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsStrongPassword,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class RegisterInstitutionDTO {
   @IsString()
   name: string;
 
   @IsString()
+  @Length(14, 14, { message: 'CNPJ must have exactly 14 digits.' })
+  @Matches(/^\d+$/, { message: 'CNPJ must contain only numeric digits.' })
   cnpj: string;
 
   @IsString()

@@ -40,11 +40,18 @@ export class RegisterInstitutionService {
     password,
     responsible,
   }: RegisterInstitutionServiceRequest): Promise<RegisterInstitutionServiceResponse> {
-    const doesInstitutionAlreadyExist =
+    const doesTheCnpjAlreayExist =
       await this.institutionsRepository.findInstitutionByCnpj(cnpj);
-    if (doesInstitutionAlreadyExist) {
+    if (doesTheCnpjAlreayExist) {
       throw new BadRequestException('CNPJ provided already exists.');
     }
+
+    const doesTheEmailAlreadyExist =
+      await this.institutionsRepository.findInstitutionByEmail(email);
+    if (doesTheEmailAlreadyExist) {
+      throw new BadRequestException('Email provided already exists.');
+    }
+
     const passwordHashed = await hash(password, 6);
     const institution = await this.institutionsRepository.create({
       name,
