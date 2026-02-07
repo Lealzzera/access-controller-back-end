@@ -5,9 +5,9 @@ import { hash } from 'bcrypt';
 
 type RegisterResponsibleServiceRequest = {
   id: string;
-  picture: string;
-  name: string;
-  password: string;
+  picture?: string;
+  name?: string;
+  password?: string;
 };
 
 type RegisterResponsibleServiceResponse = {

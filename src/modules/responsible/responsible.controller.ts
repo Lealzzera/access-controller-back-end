@@ -30,59 +30,28 @@ export class ResponsibleController {
   ) {}
   @Post('/register')
   @Role('INSTITUTION')
-  async createResponsible(
-    @Body()
-    {
-      institutionId,
-      childId,
-      name,
-      email,
-      password,
-      picture,
-      cpf,
-      kinshipId,
-    }: CreateResponsibleDTO,
-  ) {
-    try {
-      const { responsible } = await this.registerResponsibleService.exec({
-        institutionId,
-        childId,
-        name,
-        email,
-        password,
-        picture,
-        cpf,
-        kinshipId,
-      });
-      return { responsible };
-    } catch (err) {
-      return err.response;
-    }
+  async createResponsible(@Body() body: CreateResponsibleDTO) {
+    const { responsible } = await this.registerResponsibleService.exec(body);
+    return { responsible };
   }
 
   @Get('/:responsibleId')
   async getResponsibleData(@Param('responsibleId') responsibleId: string) {
-    try {
-      const responsible = await this.getResponsibleDataService.exec({
-        responsibleId,
-      });
-      return { responsible };
-    } catch (err) {
-      return err.response;
-    }
+    const responsible = await this.getResponsibleDataService.exec({
+      responsibleId,
+    });
+    return { responsible };
   }
 
   @Patch('/:id')
   @Role('INSTITUTION')
   async updateChildren(
     @Param('id') id: string,
-    @Body() { name, picture, password }: UpdateResponsibleDTO,
+    @Body() body: UpdateResponsibleDTO,
   ) {
     const { responsible } = await this.updateResponsibleService.exec({
       id,
-      name,
-      picture,
-      password,
+      ...body,
     });
 
     return responsible;
@@ -90,12 +59,6 @@ export class ResponsibleController {
 
   @Get('/by-child-id/:childId')
   async getResponsibleList(@Param('childId') childId: string) {
-    try {
-      const responsible = await this.getResponsiblesService.exec(childId);
-
-      return responsible;
-    } catch (err) {
-      return err.response;
-    }
+    return this.getResponsiblesService.exec(childId);
   }
 }

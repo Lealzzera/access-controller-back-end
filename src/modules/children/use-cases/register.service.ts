@@ -4,6 +4,8 @@ import { IChildrenRepository } from '../repositories/interfaces/children-reposit
 import { IInstitutionsRepository } from 'src/modules/institutions/repositories/interfaces/institutions-repository.interface';
 import { IPeriodRepository } from 'src/modules/period/repositories/interfaces/period-repository.interface';
 import { IGradeRepository } from 'src/modules/grade/repositories/interfaces/grade-repository.interface';
+import { IResponsibleRepository } from 'src/modules/responsible/repositories/interfaces/responsible-repository.interface';
+import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-children/repositories/interfaces/responsible-on-children-repository.interface';
 
 type RegisterChildServiceRequest = {
   name: string;
@@ -13,6 +15,8 @@ type RegisterChildServiceRequest = {
   picture?: string;
   periodId: string;
   institutionId: string;
+  responsibleId: string;
+  kinshipId: string;
 };
 
 type RegisterChildServiceResponse = {
@@ -29,6 +33,10 @@ export class RegisterService {
     private readonly periodRepository: IPeriodRepository,
     @Inject('IGradeRepository')
     private readonly gradeRepository: IGradeRepository,
+    @Inject('IResponsibleRepository')
+    private readonly responsibleRepository: IResponsibleRepository,
+    @Inject('IResponsibleOnChildrenRepository')
+    private readonly responsibleOnChildrenRepository: IResponsibleOnChildrenRepository,
   ) {}
 
   async exec({
@@ -39,9 +47,13 @@ export class RegisterService {
     birthDate,
     picture,
     institutionId,
+    responsibleId,
+    kinshipId,
   }: RegisterChildServiceRequest): Promise<RegisterChildServiceResponse> {
     if (!institutionId.length || !periodId.length || !gradeId.length) {
-      throw new BadRequestException('An institutionId must be provided');
+      throw new BadRequestException(
+        'The institutionId, periodId and gradeId must be provided',
+      );
     }
 
     if (!name.length || !cpf.length || !birthDate) {
@@ -75,6 +87,12 @@ export class RegisterService {
       throw new BadRequestException('Child CPF provided already exists.');
     }
 
+    const doesResponsibleExist =
+      await this.responsibleRepository.findResponsibleById(responsibleId);
+    if (!doesResponsibleExist) {
+      throw new NotFoundException('Responsible Id provided does not exist.');
+    }
+
     const child = await this.childrenRepository.create({
       name,
       cpf,
@@ -83,6 +101,12 @@ export class RegisterService {
       birthDate,
       picture,
       institutionId,
+    });
+
+    await this.responsibleOnChildrenRepository.create({
+      childId: child.id,
+      responsibleId,
+      kinshipId,
     });
 
     return { child };

@@ -34,32 +34,8 @@ export class ChildrenController {
   @Post('/register')
   @HttpCode(201)
   @Role('INSTITUTION')
-  async register(
-    @Body()
-    {
-      name,
-      cpf,
-      gradeId,
-      birthDate,
-      picture,
-      periodId,
-      institutionId,
-    }: RegisterChildDTO,
-  ) {
-    try {
-      const child = await this.registerService.exec({
-        name,
-        cpf,
-        gradeId,
-        periodId,
-        birthDate,
-        picture,
-        institutionId,
-      });
-      return child;
-    } catch (err) {
-      return err.response;
-    }
+  async register(@Body() body: RegisterChildDTO) {
+    return this.registerService.exec(body);
   }
 
   @Get()
@@ -69,17 +45,11 @@ export class ChildrenController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    try {
-      const children = await this.fetchChildrenByInstitutionIdService.exec({
-        institutionId,
-        page,
-        limit,
-      });
-
-      return children;
-    } catch (err) {
-      return err.response;
-    }
+    return this.fetchChildrenByInstitutionIdService.exec({
+      institutionId,
+      page,
+      limit,
+    });
   }
 
   @Get('by-responsible-id/:responsibleId')
@@ -87,28 +57,15 @@ export class ChildrenController {
   async fetchChildrenByResponsibleId(
     @Param('responsibleId') responsibleId: string,
   ) {
-    try {
-      const children =
-        this.fetchChildrenByResponsibleIdService.exec(responsibleId);
-      return children;
-    } catch (err) {
-      return err.response;
-    }
+    return this.fetchChildrenByResponsibleIdService.exec(responsibleId);
   }
 
   @Patch('/:id')
   @Role('INSTITUTION')
-  async updateChildren(
-    @Param('id') id: string,
-    @Body() { gradeId, institutionId, name, periodId, picture }: UpdateChildDTO,
-  ) {
+  async updateChildren(@Param('id') id: string, @Body() body: UpdateChildDTO) {
     const { child } = await this.updateChildService.exec({
       id,
-      gradeId,
-      institutionId,
-      name,
-      periodId,
-      picture,
+      ...body,
     });
 
     return child;

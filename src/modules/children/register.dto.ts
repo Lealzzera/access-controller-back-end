@@ -24,4 +24,10 @@ export class RegisterChildDTO {
 
   @IsString()
   institutionId: string;
+
+  @IsString()
+  responsibleId: string;
+
+  @IsString()
+  kinshipId: string;
 }

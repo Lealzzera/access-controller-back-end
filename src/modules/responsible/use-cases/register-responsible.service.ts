@@ -14,13 +14,11 @@ import { IInstitutionsRepository } from 'src/modules/institutions/repositories/i
 
 type RegisterResponsibleServiceRequest = {
   institutionId: string;
-  childId: string;
   name: string;
   email: string;
   password: string;
-  picture?: string;
-  cpf?: string;
-  kinshipId: string;
+  picture: string;
+  cpf: string;
 };
 
 type RegisterResponsibleServiceResponse = {
@@ -43,14 +41,17 @@ export class RegisterResponsibleService {
 
   async exec({
     institutionId,
-    childId,
     name,
     email,
     password,
     picture,
-    kinshipId,
     cpf,
   }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse> {
+    const doesTheInstitutionExist =
+      await this.institutionRepository.findInstitutionById(institutionId);
+    if (!doesTheInstitutionExist) {
+      throw new NotFoundException('Institution provided not found.');
+    }
     const emailExistAsAnInstitution =
       await this.institutionRepository.findInstitutionByEmail(email);
     if (emailExistAsAnInstitution) {
@@ -59,18 +60,20 @@ export class RegisterResponsibleService {
       );
     }
 
+    if (picture.length === 0) {
+      throw new NotAcceptableException('A picture must to be provided.');
+    }
+
+    if (cpf.length === 0) {
+      throw new NotAcceptableException('The CPF must to be provided.');
+    }
+
     const cpfExistAsChildCpf =
       await this.childrenRepository.findChildByCpf(cpf);
     if (cpfExistAsChildCpf) {
       throw new NotAcceptableException(
         'CPF from a child is not allowed to register as a responsible.',
       );
-    }
-
-    const childIdExists = this.childrenRepository.findChildById(childId);
-
-    if (!childIdExists) {
-      throw new NotFoundException('Child Id provided does not exist.');
     }
 
     const emailAlreadyExist =
@@ -91,14 +94,9 @@ export class RegisterResponsibleService {
     }
 
     if (emailAlreadyExist && cpfAlreadyExist) {
-      const isUserLinkedToThisChild =
-        await this.responsibleOnChildrenRepository.findResponsibleOnChildrenById(
-          { childId, responsibleId: cpfAlreadyExist.id },
-        );
-
-      if (isUserLinkedToThisChild) {
-        throw new NotAcceptableException(
-          'This responsible is already linked to this child.',
+      if (emailAlreadyExist.id !== cpfAlreadyExist.id) {
+        throw new BadRequestException(
+          'Email and CPF provided belong to different accounts.',
         );
       }
 
@@ -108,26 +106,17 @@ export class RegisterResponsibleService {
         );
 
       if (isUserLinkedToThisInstitution) {
-        await this.responsibleOnChildrenRepository.create({
-          childId,
-          responsibleId: cpfAlreadyExist.id,
-          kinshipId,
-        });
-
-        return { responsible: cpfAlreadyExist };
+        throw new BadRequestException(
+          'Responsible already registered in this institution.',
+        );
       }
 
-      await Promise.all([
-        this.responsibleOnInstitutionRepository.createResponsibleOnInstitution({
+      await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
+        {
           responsibleId: cpfAlreadyExist.id,
           institutionId,
-        }),
-        this.responsibleOnChildrenRepository.create({
-          childId,
-          responsibleId: cpfAlreadyExist.id,
-          kinshipId,
-        }),
-      ]);
+        },
+      );
 
       return { responsible: cpfAlreadyExist };
     }
@@ -142,18 +131,12 @@ export class RegisterResponsibleService {
       role: 'RESPONSIBLE',
     });
 
-    await Promise.all([
-      this.responsibleOnChildrenRepository.create({
-        childId,
-        responsibleId: responsible.id,
-        kinshipId,
-      }),
-
-      this.responsibleOnInstitutionRepository.createResponsibleOnInstitution({
+    await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
+      {
         institutionId,
         responsibleId: responsible.id,
-      }),
-    ]);
+      },
+    );
 
     return { responsible };
   }

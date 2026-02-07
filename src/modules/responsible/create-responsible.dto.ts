@@ -3,14 +3,13 @@ import {
   IsOptional,
   IsString,
   IsStrongPassword,
+  Length,
+  Matches,
 } from 'class-validator';
 
 export class CreateResponsibleDTO {
   @IsString()
   institutionId: string;
-
-  @IsString()
-  childId: string;
 
   @IsString()
   name: string;
@@ -33,8 +32,7 @@ export class CreateResponsibleDTO {
 
   @IsString()
   @IsOptional()
+  @Length(11, 11, { message: 'CPF must have exactly 11 digits.' })
+  @Matches(/^\d+$/, { message: 'CPF must contain only numeric digits.' })
   cpf: string;
-
-  @IsString()
-  kinshipId: string;
 }
