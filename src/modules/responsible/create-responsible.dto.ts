@@ -27,11 +27,6 @@ export class CreateResponsibleDTO {
   password: string;
 
   @IsString()
-  @IsOptional()
-  picture: string;
-
-  @IsString()
-  @IsOptional()
   @Length(11, 11, { message: 'CPF must have exactly 11 digits.' })
   @Matches(/^\d+$/, { message: 'CPF must contain only numeric digits.' })
   cpf: string;

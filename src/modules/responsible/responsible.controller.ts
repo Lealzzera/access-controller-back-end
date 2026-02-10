@@ -5,8 +5,11 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { RegisterResponsibleService } from './use-cases/register-responsible.service';
 import { CreateResponsibleDTO } from './create-responsible.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -30,8 +33,15 @@ export class ResponsibleController {
   ) {}
   @Post('/register')
   @Role('INSTITUTION')
-  async createResponsible(@Body() body: CreateResponsibleDTO) {
-    const { responsible } = await this.registerResponsibleService.exec(body);
+  @UseInterceptors(FileInterceptor('picture'))
+  async createResponsible(
+    @Body() body: CreateResponsibleDTO,
+    @UploadedFile() picture: Express.Multer.File,
+  ) {
+    const { responsible } = await this.registerResponsibleService.exec({
+      ...body,
+      picture,
+    });
     return { responsible };
   }
 

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Inject,
+  InternalServerErrorException,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,13 +12,15 @@ import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-chi
 import { IResponsibleOnInstitutionRepository } from 'src/modules/responsible-on-institution/repositories/interfaces/responsible-on-institution-repository.interface';
 import { IChildrenRepository } from 'src/modules/children/repositories/interfaces/children-repository.interface';
 import { IInstitutionsRepository } from 'src/modules/institutions/repositories/interfaces/institutions-repository.interface';
+import { SavePictureService } from 'src/modules/aws/save-picture.service';
+import { DeletePictureService } from 'src/modules/aws/delete-picture.service';
 
 type RegisterResponsibleServiceRequest = {
   institutionId: string;
   name: string;
   email: string;
   password: string;
-  picture: string;
+  picture: Express.Multer.File;
   cpf: string;
 };
 
@@ -37,6 +40,10 @@ export class RegisterResponsibleService {
     private readonly childrenRepository: IChildrenRepository,
     @Inject('IInstitutionsRepository')
     private readonly institutionRepository: IInstitutionsRepository,
+    @Inject('SavePictureService')
+    private readonly savePictureService: SavePictureService,
+    @Inject('DeletePictureService')
+    private readonly deletePictureService: DeletePictureService,
   ) {}
 
   async exec({
@@ -60,9 +67,19 @@ export class RegisterResponsibleService {
       );
     }
 
-    if (picture.length === 0) {
-      throw new NotAcceptableException('A picture must to be provided.');
+    if (!picture || !picture.buffer) {
+      throw new NotAcceptableException('A picture must be provided.');
     }
+
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!allowedMimeTypes.includes(picture.mimetype)) {
+      throw new BadRequestException(
+        `Invalid image type: ${picture.mimetype}. Allowed types: ${allowedMimeTypes.join(', ')}`,
+      );
+    }
+
+    const base64Picture = `data:${picture.mimetype};base64,${picture.buffer.toString('base64')}`;
 
     if (cpf.length === 0) {
       throw new NotAcceptableException('The CPF must to be provided.');
@@ -121,23 +138,35 @@ export class RegisterResponsibleService {
       return { responsible: cpfAlreadyExist };
     }
 
-    const passwordHashed = await hash(password, 6);
-    const responsible = await this.responsibleRepository.create({
-      email,
-      name,
-      password: passwordHashed,
-      picture,
-      cpf,
-      role: 'RESPONSIBLE',
+    const pictureUrl = await this.savePictureService.exec({
+      picture: base64Picture,
+      folderName: 'responsibles',
     });
 
-    await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
-      {
-        institutionId,
-        responsibleId: responsible.id,
-      },
-    );
+    try {
+      const passwordHashed = await hash(password, 6);
+      const responsible = await this.responsibleRepository.create({
+        email,
+        name,
+        password: passwordHashed,
+        picture: pictureUrl,
+        cpf,
+        role: 'RESPONSIBLE',
+      });
 
-    return { responsible };
+      await this.responsibleOnInstitutionRepository.createResponsibleOnInstitution(
+        {
+          institutionId,
+          responsibleId: responsible.id,
+        },
+      );
+
+      return { responsible };
+    } catch (error) {
+      await this.deletePictureService.exec(pictureUrl);
+      throw new InternalServerErrorException(
+        'Failed to register responsible. The uploaded picture has been removed.',
+      );
+    }
   }
 }
