@@ -8,7 +8,7 @@ import { UserInfoModule } from './modules/userInfo/userInfo.module';
 import { GradeModule } from './modules/grade/grade.module';
 import { PeriodModule } from './modules/period/period.module';
 import { KinshipModule } from './modules/kinship/kinship.module';
-import { S3Module } from './aws/s3/s3.module';
+import { AwsModule } from './modules/aws/aws.module';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { S3Module } from './aws/s3/s3.module';
     GradeModule,
     PeriodModule,
     KinshipModule,
-    S3Module,
+    AwsModule,
   ],
 })
 export class AppModule {}
