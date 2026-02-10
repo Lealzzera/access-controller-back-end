@@ -110,6 +110,8 @@ model Kinship {
   createdAt    DateTime                @default(now())
   updatedAt    DateTime                @updatedAt
   responsibles ResponsibleOnChildren[]
+
+  @@map("kinship")
 }
 
 model ResponsibleOnChildren {
