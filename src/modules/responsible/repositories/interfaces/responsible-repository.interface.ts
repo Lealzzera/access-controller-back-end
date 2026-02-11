@@ -16,7 +16,21 @@ export interface IUpdateResponsible {
   picture: string;
 }
 
+export interface IFindAllResponsiblesCursorPaginated {
+  cursor?: string;
+  take: number;
+}
+
+export interface ICursorPaginatedResult {
+  data: Responsible[];
+  nextCursor: string | null;
+}
+
 export interface IResponsibleRepository {
+  findAllCursorPaginated({
+    cursor,
+    take,
+  }: IFindAllResponsiblesCursorPaginated): Promise<ICursorPaginatedResult>;
   findResponsiblesByIds(ids: string[]): Promise<Responsible[] | []>;
   update({
     id,

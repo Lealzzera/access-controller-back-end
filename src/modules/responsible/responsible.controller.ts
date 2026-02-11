@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -18,6 +19,7 @@ import { GetResponsibleDataService } from './use-cases/get-responsible-data.serv
 import { UpdateResponsibleDTO } from './update-responsible.dto';
 import { UpdateResponsibleService } from './use-cases/update-responsible.service';
 import { GetResponsiblesService } from './use-cases/get-responsibles.service';
+import { GetResponsiblesCursorPaginatedService } from './use-cases/get-responsibles-cursor-paginated.service';
 
 @UseGuards(AuthGuard)
 @Controller({
@@ -30,7 +32,21 @@ export class ResponsibleController {
     private readonly getResponsibleDataService: GetResponsibleDataService,
     private readonly updateResponsibleService: UpdateResponsibleService,
     private readonly getResponsiblesService: GetResponsiblesService,
+    private readonly getResponsiblesCursorPaginatedService: GetResponsiblesCursorPaginatedService,
   ) {}
+
+  @Get('/')
+  @Role('INSTITUTION')
+  async getResponsiblesCursorPaginated(
+    @Query('cursor') cursor?: string,
+    @Query('take') take?: string,
+  ) {
+    return this.getResponsiblesCursorPaginatedService.exec({
+      cursor,
+      take: take ? Number(take) : 10,
+    });
+  }
+
   @Post('/register')
   @Role('INSTITUTION')
   @UseInterceptors(FileInterceptor('picture'))

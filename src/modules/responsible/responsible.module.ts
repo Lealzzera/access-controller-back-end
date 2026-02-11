@@ -13,6 +13,7 @@ import { GetResponsiblesService } from './use-cases/get-responsibles.service';
 import KinshipRepository from '../kinship/repositories/kinship.repository';
 import { SavePictureService } from '../aws/save-picture.service';
 import { DeletePictureService } from '../aws/delete-picture.service';
+import { GetResponsiblesCursorPaginatedService } from './use-cases/get-responsibles-cursor-paginated.service';
 
 @Module({
   providers: [
@@ -24,6 +25,7 @@ import { DeletePictureService } from '../aws/delete-picture.service';
     UpdateResponsibleService,
     RegisterResponsibleService,
     GetResponsibleDataService,
+    GetResponsiblesCursorPaginatedService,
     { provide: 'IKinshipRepository', useClass: KinshipRepository },
     { provide: 'IResponsibleRepository', useClass: ResponsibleRepository },
     {

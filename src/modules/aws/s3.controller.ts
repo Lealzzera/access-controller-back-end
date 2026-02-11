@@ -1,7 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { SavePictureService } from './save-picture.service';
 
-@Controller('s3')
+@Controller({
+  path: 's3',
+  version: '1',
+})
 export class S3Controller {
   constructor(private readonly savePictureService: SavePictureService) {}
 
