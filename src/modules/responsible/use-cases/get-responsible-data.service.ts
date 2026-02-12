@@ -1,26 +1,24 @@
 import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
+import { GetPresignedUrlService } from '../../aws/get-presigned-url.service';
 
 type GetResponsibleDataServiceRequest = {
   responsibleId: string;
 };
 
 type GetResponsibleDataServiceResponse = {
+  id: string;
   name: string;
   email: string;
   cpf: string;
-  street: string | null;
-  neighborhood: string | null;
-  city: string | null;
-  state: string | null;
-  cep: string | null;
+  phoneNumber: string | null;
   picture: string | null;
-  role: string;
 };
 export class GetResponsibleDataService {
   constructor(
     @Inject('IResponsibleRepository')
     private readonly responsibleRepository: IResponsibleRepository,
+    private readonly getPresignedUrlService: GetPresignedUrlService,
   ) {}
 
   async exec({
@@ -36,17 +34,17 @@ export class GetResponsibleDataService {
     if (!responsible) {
       throw new NotFoundException('Responsible not found');
     }
+    const picture = responsible.picture
+      ? await this.getPresignedUrlService.exec(responsible.picture)
+      : null;
+
     return {
+      id: responsible.id,
       name: responsible.name,
       email: responsible.email,
       cpf: responsible.cpf,
-      street: responsible.street,
-      neighborhood: responsible.neighborhood,
-      city: responsible.city,
-      cep: responsible.cep,
-      state: responsible.state,
-      picture: responsible.picture,
-      role: responsible.role,
+      phoneNumber: responsible.phoneNumber,
+      picture,
     };
   }
 }

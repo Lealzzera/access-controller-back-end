@@ -6,6 +6,7 @@ export interface ICreateResponsible {
   password: string;
   picture?: string;
   cpf: string;
+  phoneNumber?: string;
   role: Role;
 }
 
@@ -47,6 +48,7 @@ export interface IResponsibleRepository {
     password,
     picture,
     cpf,
+    phoneNumber,
     role,
   }: ICreateResponsible): Promise<Responsible>;
 }

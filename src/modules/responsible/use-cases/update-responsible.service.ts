@@ -10,8 +10,15 @@ type RegisterResponsibleServiceRequest = {
   password?: string;
 };
 
-type RegisterResponsibleServiceResponse = {
-  responsible: Responsible;
+type UpdateResponsibleServiceResponse = {
+  responsible: {
+    id: string;
+    name: string;
+    email: string;
+    cpf: string;
+    phoneNumber: string | null;
+    picture: string | null;
+  };
 };
 
 export class UpdateResponsibleService {
@@ -25,7 +32,7 @@ export class UpdateResponsibleService {
     name,
     password,
     picture,
-  }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse> {
+  }: RegisterResponsibleServiceRequest): Promise<UpdateResponsibleServiceResponse> {
     const doesResponsibleExist =
       await this.responsibleRepository.findResponsibleById(id);
 
@@ -46,6 +53,15 @@ export class UpdateResponsibleService {
       picture,
     });
 
-    return { responsible };
+    return {
+      responsible: {
+        id: responsible.id,
+        name: responsible.name,
+        email: responsible.email,
+        cpf: responsible.cpf,
+        phoneNumber: responsible.phoneNumber,
+        picture: responsible.picture,
+      },
+    };
   }
 }

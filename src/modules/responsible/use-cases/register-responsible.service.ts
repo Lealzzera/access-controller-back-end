@@ -22,10 +22,18 @@ type RegisterResponsibleServiceRequest = {
   password: string;
   picture: Express.Multer.File;
   cpf: string;
+  phoneNumber?: string;
 };
 
 type RegisterResponsibleServiceResponse = {
-  responsible: Responsible;
+  responsible: {
+    id: string;
+    name: string;
+    email: string;
+    cpf: string;
+    phoneNumber: string | null;
+    picture: string | null;
+  };
 };
 
 export class RegisterResponsibleService {
@@ -53,6 +61,7 @@ export class RegisterResponsibleService {
     password,
     picture,
     cpf,
+    phoneNumber,
   }: RegisterResponsibleServiceRequest): Promise<RegisterResponsibleServiceResponse> {
     const doesTheInstitutionExist =
       await this.institutionRepository.findInstitutionById(institutionId);
@@ -135,7 +144,16 @@ export class RegisterResponsibleService {
         },
       );
 
-      return { responsible: cpfAlreadyExist };
+      return {
+        responsible: {
+          id: cpfAlreadyExist.id,
+          name: cpfAlreadyExist.name,
+          email: cpfAlreadyExist.email,
+          cpf: cpfAlreadyExist.cpf,
+          phoneNumber: cpfAlreadyExist.phoneNumber,
+          picture: cpfAlreadyExist.picture,
+        },
+      };
     }
 
     const pictureUrl = await this.savePictureService.exec({
@@ -151,6 +169,7 @@ export class RegisterResponsibleService {
         password: passwordHashed,
         picture: pictureUrl,
         cpf,
+        phoneNumber,
         role: 'RESPONSIBLE',
       });
 
@@ -161,7 +180,16 @@ export class RegisterResponsibleService {
         },
       );
 
-      return { responsible };
+      return {
+        responsible: {
+          id: responsible.id,
+          name: responsible.name,
+          email: responsible.email,
+          cpf: responsible.cpf,
+          phoneNumber: responsible.phoneNumber,
+          picture: responsible.picture,
+        },
+      };
     } catch (error) {
       await this.deletePictureService.exec(pictureUrl);
       throw new InternalServerErrorException(

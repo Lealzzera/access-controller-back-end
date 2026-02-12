@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
+import { GetPresignedUrlService } from '../../aws/get-presigned-url.service';
 
 type GetResponsiblesCursorPaginatedServiceRequest = {
   cursor?: string;
@@ -7,16 +8,12 @@ type GetResponsiblesCursorPaginatedServiceRequest = {
 };
 
 type ResponsibleType = {
+  id: string;
   name: string;
   email: string;
   cpf: string;
-  street: string | null;
-  neighborhood: string | null;
-  city: string | null;
-  state: string | null;
-  cep: string | null;
+  phoneNumber: string | null;
   picture: string | null;
-  role: string;
 };
 
 type GetResponsiblesCursorPaginatedServiceResponse = {
@@ -28,6 +25,7 @@ export class GetResponsiblesCursorPaginatedService {
   constructor(
     @Inject('IResponsibleRepository')
     private readonly responsibleRepository: IResponsibleRepository,
+    private readonly getPresignedUrlService: GetPresignedUrlService,
   ) {}
 
   async exec({
@@ -40,8 +38,23 @@ export class GetResponsiblesCursorPaginatedService {
         cursor,
       });
 
+    const responsiblesWithPresignedUrls = responsibles.data
+      ? await Promise.all(
+          responsibles.data.map(async (responsible) => ({
+            id: responsible.id,
+            name: responsible.name,
+            email: responsible.email,
+            cpf: responsible.cpf,
+            phoneNumber: responsible.phoneNumber,
+            picture: responsible.picture
+              ? await this.getPresignedUrlService.exec(responsible.picture)
+              : null,
+          })),
+        )
+      : null;
+
     return {
-      responsibles: responsibles.data,
+      responsibles: responsiblesWithPresignedUrls,
       nextCursor: responsibles.nextCursor,
     };
   }

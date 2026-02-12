@@ -96,6 +96,7 @@ export class ResponsibleRepository implements IResponsibleRepository {
     password,
     picture,
     cpf,
+    phoneNumber,
     role,
   }: ICreateResponsible): Promise<Responsible> {
     const responsible = await prisma.responsible.create({
@@ -105,6 +106,7 @@ export class ResponsibleRepository implements IResponsibleRepository {
         password,
         picture,
         cpf,
+        phoneNumber,
         role,
       },
     });

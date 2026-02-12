@@ -30,4 +30,8 @@ export class CreateResponsibleDTO {
   @Length(11, 11, { message: 'CPF must have exactly 11 digits.' })
   @Matches(/^\d+$/, { message: 'CPF must contain only numeric digits.' })
   cpf: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
 }

@@ -45,6 +45,7 @@ model Responsible {
   state        String?
   cep          String?
   picture      String?
+  phoneNumber  String?
   children     ResponsibleOnChildren[]
   deletedAt    DateTime?
   createdAt    DateTime                   @default(now())
