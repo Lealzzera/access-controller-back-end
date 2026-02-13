@@ -7,7 +7,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserInfoModule } from './modules/userInfo/userInfo.module';
 import { GradeModule } from './modules/grade/grade.module';
 import { PeriodModule } from './modules/period/period.module';
-import { KinshipModule } from './modules/kinship/kinship.module';
 import { AwsModule } from './modules/aws/aws.module';
 
 @Module({
@@ -23,7 +22,6 @@ import { AwsModule } from './modules/aws/aws.module';
     UserInfoModule,
     GradeModule,
     PeriodModule,
-    KinshipModule,
     AwsModule,
   ],
 })
