@@ -104,27 +104,13 @@ model Grade {
   @@map("grades")
 }
 
-model Kinship {
-  id           String                  @id @default(uuid())
-  name         String                  @unique
-  value        Int                     @unique
-  createdAt    DateTime                @default(now())
-  updatedAt    DateTime                @updatedAt
-  responsibles ResponsibleOnChildren[]
-
-  @@map("kinship")
-}
-
 model ResponsibleOnChildren {
   childId       String
   responsibleId String
-  kinshipId     String?
   notAllowed    Boolean?
-
-  child       Child       @relation(fields: [childId], references: [id])
-  responsible Responsible @relation(fields: [responsibleId], references: [id])
-  kinship     Kinship?    @relation(fields: [kinshipId], references: [id])
-
+  kinship       String?
+  child         Child       @relation(fields: [childId], references: [id])
+  responsible   Responsible @relation(fields: [responsibleId], references: [id])
   @@id([childId, responsibleId])
   @@map("responsibleOnChildren")
 }
