@@ -10,7 +10,6 @@ import { GetResponsibleDataService } from './use-cases/get-responsible-data.serv
 import { InstitutionsRepository } from '../institutions/repositories/institutions.repository';
 import { UpdateResponsibleService } from './use-cases/update-responsible.service';
 import { GetResponsiblesService } from './use-cases/get-responsibles.service';
-import KinshipRepository from '../kinship/repositories/kinship.repository';
 import { SavePictureService } from '../aws/save-picture.service';
 import { DeletePictureService } from '../aws/delete-picture.service';
 import { GetPresignedUrlService } from '../aws/get-presigned-url.service';
@@ -27,7 +26,6 @@ import { GetResponsiblesCursorPaginatedService } from './use-cases/get-responsib
     RegisterResponsibleService,
     GetResponsibleDataService,
     GetResponsiblesCursorPaginatedService,
-    { provide: 'IKinshipRepository', useClass: KinshipRepository },
     { provide: 'IResponsibleRepository', useClass: ResponsibleRepository },
     {
       provide: 'IResponsibleOnChildrenRepository',

@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
 import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-children/repositories/interfaces/responsible-on-children-repository.interface';
-import IKinshipRepository from 'src/modules/kinship/repositories/interfaces/kinship-repository.interface';
 import { GetPresignedUrlService } from '../../aws/get-presigned-url.service';
 
 type GetResponsibleServiceResponse = {
@@ -11,7 +10,7 @@ type GetResponsibleServiceResponse = {
   cpf: string;
   phoneNumber: string | null;
   picture: string | null;
-  kinship: string;
+  kinship: string | null;
 };
 export class GetResponsiblesService {
   constructor(
@@ -19,8 +18,6 @@ export class GetResponsiblesService {
     private readonly responsibleRepository: IResponsibleRepository,
     @Inject('IResponsibleOnChildrenRepository')
     private readonly responsibleOnChildrenRepository: IResponsibleOnChildrenRepository,
-    @Inject('IKinshipRepository')
-    private readonly kinshipRepository: IKinshipRepository,
     private readonly getPresignedUrlService: GetPresignedUrlService,
   ) {}
 
@@ -44,9 +41,6 @@ export class GetResponsiblesService {
           await this.responsibleRepository.findResponsibleById(
             item.responsibleId,
           );
-        const { name: kinship } = await this.kinshipRepository.fetchKinshipById(
-          item.kinshipId,
-        );
         const presignedPicture = picture
           ? await this.getPresignedUrlService.exec(picture)
           : null;
@@ -57,7 +51,7 @@ export class GetResponsiblesService {
           cpf,
           phoneNumber,
           picture: presignedPicture,
-          kinship,
+          kinship: item.kinship,
         };
       }),
     );
