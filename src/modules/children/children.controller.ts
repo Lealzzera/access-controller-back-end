@@ -21,6 +21,7 @@ import { FetchChildrenByInstitutionIdCursorPaginatedService } from './use-cases/
 import { FetchChildrenByResponsibleIdService } from './use-cases/fetch-children-by-responsible-id.service';
 import { UpdateChildService } from './use-cases/update-child.service';
 import { UpdateChildDTO } from './update-child.dto';
+import { GetChildrenDTO } from './get-children.dto';
 
 @Controller({
   path: 'children',
@@ -36,6 +37,21 @@ export class ChildrenController {
     private readonly updateChildService: UpdateChildService,
   ) {}
 
+  @Get('/')
+  @Role('INSTITUTION')
+  async fetchChildrenByInstitutionId(
+    @Query() query: GetChildrenDTO,
+    @Query('cursor') cursor?: string,
+    @Query('take') take?: string,
+  ) {
+    console.log(query.institutionId);
+    return this.fetchChildrenByInstitutionIdCursorPaginatedService.exec({
+      institutionId: query.institutionId,
+      cursor,
+      take: take ? Number(take) : 10,
+    });
+  }
+
   @Post('/register')
   @HttpCode(201)
   @Role('INSTITUTION')
@@ -45,20 +61,6 @@ export class ChildrenController {
     @UploadedFile() picture: Express.Multer.File,
   ) {
     return this.registerService.exec({ ...body, picture });
-  }
-
-  @Get('/')
-  @Role('INSTITUTION')
-  async fetchChildrenByInstitutionId(
-    @Query('institutionId') institutionId: string,
-    @Query('cursor') cursor?: string,
-    @Query('take') take?: string,
-  ) {
-    return this.fetchChildrenByInstitutionIdCursorPaginatedService.exec({
-      institutionId,
-      cursor,
-      take: take ? Number(take) : 10,
-    });
   }
 
   @Get('by-responsible-id/:responsibleId')
