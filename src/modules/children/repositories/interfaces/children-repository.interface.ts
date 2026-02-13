@@ -16,6 +16,17 @@ export interface IFetchChildrenByInstitutionId {
   limit?: number;
 }
 
+export interface IFetchChildrenByInstitutionIdCursorPaginated {
+  institutionId: string;
+  cursor?: string;
+  take: number;
+}
+
+export interface IChildrenCursorPaginatedResult {
+  data: Child[];
+  nextCursor: string | null;
+}
+
 export interface IUpdateChildInterface {
   id: string;
   name?: string;
@@ -32,6 +43,11 @@ export interface IChildrenRepository {
     page,
     limit,
   }: IFetchChildrenByInstitutionId): Promise<Child[] | null>;
+  findChildrenByInstitutionIdCursorPaginated({
+    institutionId,
+    cursor,
+    take,
+  }: IFetchChildrenByInstitutionIdCursorPaginated): Promise<IChildrenCursorPaginatedResult>;
   findChildByCpf(cpf: string): Promise<Child | null>;
   findChildById(id: string): Promise<Child | null>;
   create({

@@ -1,11 +1,13 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString, Length, Matches } from 'class-validator';
 
 export class RegisterChildDTO {
   @IsString()
   name: string;
 
   @IsString()
+  @Length(11, 11, { message: 'CPF must have exactly 11 digits.' })
+  @Matches(/^\d+$/, { message: 'CPF must contain only numeric digits.' })
   cpf: string;
 
   @IsString()
@@ -19,15 +21,12 @@ export class RegisterChildDTO {
   birthDate: Date;
 
   @IsString()
-  @IsOptional()
-  picture?: string;
-
-  @IsString()
   institutionId: string;
 
   @IsString()
   responsibleId: string;
 
+  @IsOptional()
   @IsString()
-  kinshipId: string;
+  kinship?: string;
 }

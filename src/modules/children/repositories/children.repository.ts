@@ -2,9 +2,11 @@ import { Child } from '@prisma/client';
 
 import { prisma } from 'src/prisma/prisma-client';
 import {
+  IChildrenCursorPaginatedResult,
   IChildrenRepository,
   ICreateChildinterface,
   IFetchChildrenByInstitutionId,
+  IFetchChildrenByInstitutionIdCursorPaginated,
   IUpdateChildInterface,
 } from './interfaces/children-repository.interface';
 
@@ -35,6 +37,35 @@ export class ChildrenRepository implements IChildrenRepository {
     });
 
     return children;
+  }
+  async findChildrenByInstitutionIdCursorPaginated({
+    institutionId,
+    cursor,
+    take,
+  }: IFetchChildrenByInstitutionIdCursorPaginated): Promise<IChildrenCursorPaginatedResult> {
+    const children = await prisma.child.findMany({
+      take: take + 1,
+      ...(cursor && {
+        cursor: { id: cursor },
+        skip: 1,
+      }),
+      where: {
+        institutionId,
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    const hasNextPage = children.length > take;
+    const data = hasNextPage ? children.slice(0, take) : children;
+    const nextCursor = hasNextPage ? children[take - 1]?.id : null;
+
+    return {
+      data,
+      nextCursor,
+    };
   }
   async findChildByCpf(cpf: string): Promise<Child | null> {
     const child = await prisma.child.findFirst({
