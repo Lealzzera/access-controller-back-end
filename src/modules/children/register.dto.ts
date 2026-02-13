@@ -26,7 +26,6 @@ export class RegisterChildDTO {
   @IsString()
   responsibleId: string;
 
-  @IsOptional()
   @IsString()
   kinship?: string;
 }

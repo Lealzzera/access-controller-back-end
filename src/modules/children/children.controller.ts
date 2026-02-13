@@ -44,7 +44,6 @@ export class ChildrenController {
     @Query('cursor') cursor?: string,
     @Query('take') take?: string,
   ) {
-    console.log(query.institutionId);
     return this.fetchChildrenByInstitutionIdCursorPaginatedService.exec({
       institutionId: query.institutionId,
       cursor,
