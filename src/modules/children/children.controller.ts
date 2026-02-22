@@ -20,6 +20,7 @@ import { FetchChildrenByInstitutionIdService } from './use-cases/fetch-children-
 import { FetchChildrenByInstitutionIdCursorPaginatedService } from './use-cases/fetch-children-by-institution-id-cursor-paginated.service';
 import { FetchChildrenByResponsibleIdService } from './use-cases/fetch-children-by-responsible-id.service';
 import { UpdateChildService } from './use-cases/update-child.service';
+import { FetchChildByIdService } from './use-cases/fetch-child-by-id.service';
 import { UpdateChildDTO } from './update-child.dto';
 import { GetChildrenDTO } from './get-children.dto';
 
@@ -35,6 +36,7 @@ export class ChildrenController {
     private readonly fetchChildrenByInstitutionIdCursorPaginatedService: FetchChildrenByInstitutionIdCursorPaginatedService,
     private readonly fetchChildrenByResponsibleIdService: FetchChildrenByResponsibleIdService,
     private readonly updateChildService: UpdateChildService,
+    private readonly fetchChildByIdService: FetchChildByIdService,
   ) {}
 
   @Get('/')
@@ -63,11 +65,15 @@ export class ChildrenController {
   }
 
   @Get('by-responsible-id/:responsibleId')
-  @Role('RESPONSIBLE')
   async fetchChildrenByResponsibleId(
     @Param('responsibleId') responsibleId: string,
   ) {
     return this.fetchChildrenByResponsibleIdService.exec(responsibleId);
+  }
+
+  @Get('/:id')
+  async fetchChildById(@Param('id') id: string) {
+    return this.fetchChildByIdService.exec(id);
   }
 
   @Patch('/:id')

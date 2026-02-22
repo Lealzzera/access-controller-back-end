@@ -4,13 +4,14 @@ import { IResponsibleOnChildrenRepository } from 'src/modules/responsible-on-chi
 import { IPeriodRepository } from 'src/modules/period/repositories/interfaces/period-repository.interface';
 import { IGradeRepository } from 'src/modules/grade/repositories/interfaces/grade-repository.interface';
 import { IResponsibleRepository } from 'src/modules/responsible/repositories/interfaces/responsible-repository.interface';
+import { GetPresignedUrlService } from '../../aws/get-presigned-url.service';
 
 type Child = {
   name: string;
   id: string;
   cpf: string;
   birthDate: Date;
-  picture: string;
+  picture: string | null;
   createdAt: Date;
   deletedAt: Date;
   institutionId: string;
@@ -34,6 +35,7 @@ export class FetchChildrenByResponsibleIdService {
     private readonly gradeRepository: IGradeRepository,
     @Inject('IResponsibleRepository')
     private readonly responsibleRepository: IResponsibleRepository,
+    private readonly getPresignedUrlService: GetPresignedUrlService,
   ) {}
 
   async exec(
@@ -64,13 +66,17 @@ export class FetchChildrenByResponsibleIdService {
         );
         const grade = await this.gradeRepository.findGradeById(child.gradeId);
 
+        const presignedPicture = child.picture
+          ? await this.getPresignedUrlService.exec(child.picture)
+          : null;
+
         return {
           id: child.id,
           name: child.name,
           cpf: child.cpf,
           createdAt: child.createdAt,
           deletedAt: child.deletedAt,
-          picture: child.picture,
+          picture: presignedPicture,
           birthDate: child.birthDate,
           period,
           grade,

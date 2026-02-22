@@ -11,6 +11,7 @@ import { FetchChildrenByResponsibleIdService } from './use-cases/fetch-children-
 import { PeriodRepository } from '../period/repositories/period-repository';
 import { GradeRepository } from '../grade/repositories/grade-repository';
 import { UpdateChildService } from './use-cases/update-child.service';
+import { FetchChildByIdService } from './use-cases/fetch-child-by-id.service';
 import { FetchChildrenByInstitutionIdCursorPaginatedService } from './use-cases/fetch-children-by-institution-id-cursor-paginated.service';
 import { GetPresignedUrlService } from '../aws/get-presigned-url.service';
 import { ResponsibleRepository } from '../responsible/repositories/responsible.repository';
@@ -30,6 +31,7 @@ import { DeletePictureService } from '../aws/delete-picture.service';
     GetPresignedUrlService,
     FetchChildrenByResponsibleIdService,
     UpdateChildService,
+    FetchChildByIdService,
     { provide: 'IChildrenRepository', useClass: ChildrenRepository },
     { provide: 'IInstitutionsRepository', useClass: InstitutionsRepository },
     { provide: 'IPeriodRepository', useClass: PeriodRepository },
