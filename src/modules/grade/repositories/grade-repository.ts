@@ -1,5 +1,8 @@
 import { Grade } from '@prisma/client';
-import { IGradeRepository } from './interfaces/grade-repository.interface';
+import {
+  ICreateGrade,
+  IGradeRepository,
+} from './interfaces/grade-repository.interface';
 import { prisma } from 'src/prisma/prisma-client';
 
 export class GradeRepository implements IGradeRepository {
@@ -16,6 +19,17 @@ export class GradeRepository implements IGradeRepository {
     const grade = await prisma.grade.findFirst({
       where: {
         id: gradeId,
+      },
+    });
+
+    return grade;
+  }
+
+  async create({ name, institutionId }: ICreateGrade): Promise<Grade> {
+    const grade = await prisma.grade.create({
+      data: {
+        name,
+        institutionId,
       },
     });
 

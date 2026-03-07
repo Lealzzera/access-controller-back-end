@@ -1,5 +1,8 @@
 import { Period } from '@prisma/client';
-import { IPeriodRepository } from './interfaces/period-repository.interface';
+import {
+  ICreatePeriod,
+  IPeriodRepository,
+} from './interfaces/period-repository.interface';
 import { prisma } from 'src/prisma/prisma-client';
 
 export class PeriodRepository implements IPeriodRepository {
@@ -16,6 +19,17 @@ export class PeriodRepository implements IPeriodRepository {
     const period = await prisma.period.findFirst({
       where: {
         id: periodId,
+      },
+    });
+
+    return period;
+  }
+
+  async create({ name, institutionId }: ICreatePeriod): Promise<Period> {
+    const period = await prisma.period.create({
+      data: {
+        name,
+        institutionId,
       },
     });
 
