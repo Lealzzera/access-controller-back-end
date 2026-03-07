@@ -45,11 +45,13 @@ export class ChildrenController {
     @Query() query: GetChildrenDTO,
     @Query('cursor') cursor?: string,
     @Query('take') take?: string,
+    @Query('active') active?: boolean,
   ) {
     return this.fetchChildrenByInstitutionIdCursorPaginatedService.exec({
       institutionId: query.institutionId,
       cursor,
       take: take ? Number(take) : 10,
+      active,
     });
   }
 

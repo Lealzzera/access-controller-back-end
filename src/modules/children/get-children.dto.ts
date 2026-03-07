@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class GetChildrenDTO {
   @IsString({
@@ -14,4 +15,9 @@ export class GetChildrenDTO {
   @IsOptional()
   @IsString()
   take?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  active?: boolean;
 }

@@ -23,6 +23,7 @@ type FetchChildrenByInstitutionIdCursorPaginatedServiceRequest = {
   institutionId: string;
   cursor?: string;
   take: number;
+  active?: boolean;
 };
 
 type FetchChildrenByInstitutionIdCursorPaginatedServiceResponse = {
@@ -47,6 +48,7 @@ export class FetchChildrenByInstitutionIdCursorPaginatedService {
     institutionId,
     cursor,
     take,
+    active,
   }: FetchChildrenByInstitutionIdCursorPaginatedServiceRequest): Promise<FetchChildrenByInstitutionIdCursorPaginatedServiceResponse> {
     if (!institutionId.length) {
       throw new BadRequestException('You must provide a valid institution id');
@@ -91,6 +93,20 @@ export class FetchChildrenByInstitutionIdCursorPaginatedService {
         };
       }),
     );
+
+    if (active) {
+      return {
+        children: children.filter((child) => child.isPresent),
+        nextCursor: result.nextCursor,
+      };
+    }
+
+    if (active === false) {
+      return {
+        children: children.filter((child) => !child.isPresent),
+        nextCursor: result.nextCursor,
+      };
+    }
 
     return { children, nextCursor: result.nextCursor };
   }
