@@ -2,6 +2,7 @@ import { Grade } from '@prisma/client';
 import {
   ICreateGrade,
   IGradeRepository,
+  IUpdateGrade,
 } from './interfaces/grade-repository.interface';
 import { prisma } from 'src/prisma/prisma-client';
 
@@ -30,6 +31,25 @@ export class GradeRepository implements IGradeRepository {
       data: {
         name,
         institutionId,
+      },
+    });
+
+    return grade;
+  }
+
+  async update({ id, name }: IUpdateGrade): Promise<Grade> {
+    const grade = await prisma.grade.update({
+      where: { id },
+      data: { name },
+    });
+
+    return grade;
+  }
+
+  async delete(gradeId: string): Promise<Grade> {
+    const grade = await prisma.grade.delete({
+      where: {
+        id: gradeId,
       },
     });
 

@@ -2,6 +2,7 @@ import { Period } from '@prisma/client';
 import {
   ICreatePeriod,
   IPeriodRepository,
+  IUpdatePeriod,
 } from './interfaces/period-repository.interface';
 import { prisma } from 'src/prisma/prisma-client';
 
@@ -30,6 +31,25 @@ export class PeriodRepository implements IPeriodRepository {
       data: {
         name,
         institutionId,
+      },
+    });
+
+    return period;
+  }
+
+  async update({ id, name }: IUpdatePeriod): Promise<Period> {
+    const period = await prisma.period.update({
+      where: { id },
+      data: { name },
+    });
+
+    return period;
+  }
+
+  async delete(periodId: string): Promise<Period> {
+    const period = await prisma.period.delete({
+      where: {
+        id: periodId,
       },
     });
 
