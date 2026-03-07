@@ -28,4 +28,9 @@ export interface IResponsibleOnChildrenRepository {
     childId,
     responsibleId,
   }: IFindResponsibleOnChildrenById): Promise<ResponsibleOnChildren | null>;
+
+  delete({
+    childId,
+    responsibleId,
+  }: IFindResponsibleOnChildrenById): Promise<ResponsibleOnChildren>;
 }

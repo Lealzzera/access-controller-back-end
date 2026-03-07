@@ -60,4 +60,20 @@ export class ResponsibleOnChildrenRepository
 
     return responsibleOnChildren;
   }
+
+  async delete({
+    childId,
+    responsibleId,
+  }: IFindResponsibleOnChildrenById): Promise<ResponsibleOnChildren> {
+    const responsibleOnChildren = await prisma.responsibleOnChildren.delete({
+      where: {
+        childId_responsibleId: {
+          childId,
+          responsibleId,
+        },
+      },
+    });
+
+    return responsibleOnChildren;
+  }
 }

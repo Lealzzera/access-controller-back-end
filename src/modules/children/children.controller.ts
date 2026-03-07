@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -23,6 +24,7 @@ import { UpdateChildService } from './use-cases/update-child.service';
 import { FetchChildByIdService } from './use-cases/fetch-child-by-id.service';
 import { UpdateChildDTO } from './update-child.dto';
 import { GetChildrenDTO } from './get-children.dto';
+import { UnlinkResponsibleFromChildService } from './use-cases/unlink-responsible-from-child.service';
 
 @Controller({
   path: 'children',
@@ -37,6 +39,7 @@ export class ChildrenController {
     private readonly fetchChildrenByResponsibleIdService: FetchChildrenByResponsibleIdService,
     private readonly updateChildService: UpdateChildService,
     private readonly fetchChildByIdService: FetchChildByIdService,
+    private readonly unlinkResponsibleFromChildService: UnlinkResponsibleFromChildService,
   ) {}
 
   @Get('/')
@@ -76,6 +79,19 @@ export class ChildrenController {
   @Get('/:id')
   async fetchChildById(@Param('id') id: string) {
     return this.fetchChildByIdService.exec(id);
+  }
+
+  @Delete('/:childId/responsible/:responsibleId')
+  @HttpCode(204)
+  @Role('INSTITUTION')
+  async unlinkResponsibleFromChild(
+    @Param('childId') childId: string,
+    @Param('responsibleId') responsibleId: string,
+  ) {
+    await this.unlinkResponsibleFromChildService.exec({
+      childId,
+      responsibleId,
+    });
   }
 
   @Patch('/:id')
