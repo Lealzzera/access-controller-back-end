@@ -34,6 +34,7 @@ export interface IUpdateChildInterface {
   periodId?: string;
   picture?: string;
   institutionId?: string;
+  isPresent?: boolean;
 }
 
 export interface IChildrenRepository {

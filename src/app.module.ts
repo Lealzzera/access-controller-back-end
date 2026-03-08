@@ -8,6 +8,7 @@ import { UserInfoModule } from './modules/userInfo/userInfo.module';
 import { GradeModule } from './modules/grade/grade.module';
 import { PeriodModule } from './modules/period/period.module';
 import { AwsModule } from './modules/aws/aws.module';
+import { SolicitationModule } from './modules/solicitation/solicitation.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AwsModule } from './modules/aws/aws.module';
     GradeModule,
     PeriodModule,
     AwsModule,
+    SolicitationModule,
   ],
 })
 export class AppModule {}

@@ -116,6 +116,7 @@ export class ChildrenRepository implements IChildrenRepository {
     name,
     periodId,
     picture,
+    isPresent,
   }: IUpdateChildInterface): Promise<Child> {
     const child = await prisma.child.update({
       where: { id },
@@ -125,6 +126,7 @@ export class ChildrenRepository implements IChildrenRepository {
         name: name || undefined,
         periodId: periodId || undefined,
         picture: picture || undefined,
+        isPresent: isPresent !== undefined ? isPresent : undefined,
       },
     });
 
