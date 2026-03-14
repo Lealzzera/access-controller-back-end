@@ -1,8 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { IResponsibleRepository } from '../repositories/interfaces/responsible-repository.interface';
 import { GetPresignedUrlService } from '../../aws/get-presigned-url.service';
+import { IInstitutionsRepository } from 'src/modules/institutions/repositories/interfaces/institutions-repository.interface';
 
 type GetResponsiblesCursorPaginatedServiceRequest = {
+  institutionId: string;
   cursor?: string;
   take: number;
 };
@@ -26,16 +28,25 @@ export class GetResponsiblesCursorPaginatedService {
     @Inject('IResponsibleRepository')
     private readonly responsibleRepository: IResponsibleRepository,
     private readonly getPresignedUrlService: GetPresignedUrlService,
+    @Inject('IInstitutionsRepository')
+    private readonly institutionRepository: IInstitutionsRepository,
   ) {}
 
   async exec({
+    institutionId,
     cursor,
     take,
   }: GetResponsiblesCursorPaginatedServiceRequest): Promise<GetResponsiblesCursorPaginatedServiceResponse> {
+    const doesTheInstitutionExists =
+      await this.institutionRepository.findInstitutionById(institutionId);
+    if (!doesTheInstitutionExists) {
+      throw new Error('Institution not found');
+    }
     const responsibles =
       await this.responsibleRepository.findAllCursorPaginated({
         take,
         cursor,
+        institutionId,
       });
 
     const responsiblesWithPresignedUrls = responsibles.data

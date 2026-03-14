@@ -20,6 +20,7 @@ import { UpdateResponsibleDTO } from './update-responsible.dto';
 import { UpdateResponsibleService } from './use-cases/update-responsible.service';
 import { GetResponsiblesService } from './use-cases/get-responsibles.service';
 import { GetResponsiblesCursorPaginatedService } from './use-cases/get-responsibles-cursor-paginated.service';
+import { GetResponsiblesQueryDTO } from './get-responsibles-query.dto';
 
 @UseGuards(AuthGuard)
 @Controller({
@@ -38,12 +39,12 @@ export class ResponsibleController {
   @Get('/')
   @Role('INSTITUTION')
   async getResponsiblesCursorPaginated(
-    @Query('cursor') cursor?: string,
-    @Query('take') take?: string,
+    @Query() query: GetResponsiblesQueryDTO,
   ) {
     return this.getResponsiblesCursorPaginatedService.exec({
-      cursor,
-      take: take ? Number(take) : 10,
+      institutionId: query.institutionId,
+      cursor: query.cursor,
+      take: query.take,
     });
   }
 

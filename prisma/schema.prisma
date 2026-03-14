@@ -84,7 +84,7 @@ model Institution {
 
 model Period {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String   
   createdAt DateTime @default(now())
 
   institution Institution @relation(fields: [institutionId], references: [id])
@@ -97,10 +97,9 @@ model Period {
 
 model Grade {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String   
   createdAt DateTime @default(now())
   children  Child[]
-
   institution   Institution @relation(fields: [institutionId], references: [id])
   institutionId String
 

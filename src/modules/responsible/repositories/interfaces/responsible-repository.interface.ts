@@ -18,6 +18,7 @@ export interface IUpdateResponsible {
 }
 
 export interface IFindAllResponsiblesCursorPaginated {
+  institutionId: string;
   cursor?: string;
   take: number;
 }
@@ -29,6 +30,7 @@ export interface ICursorPaginatedResult {
 
 export interface IResponsibleRepository {
   findAllCursorPaginated({
+    institutionId,
     cursor,
     take,
   }: IFindAllResponsiblesCursorPaginated): Promise<ICursorPaginatedResult>;

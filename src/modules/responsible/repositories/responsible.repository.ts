@@ -10,6 +10,7 @@ import { prisma } from 'src/prisma/prisma-client';
 
 export class ResponsibleRepository implements IResponsibleRepository {
   async findAllCursorPaginated({
+    institutionId,
     cursor,
     take,
   }: IFindAllResponsiblesCursorPaginated): Promise<ICursorPaginatedResult> {
@@ -19,6 +20,13 @@ export class ResponsibleRepository implements IResponsibleRepository {
         cursor: { id: cursor },
         skip: 1,
       }),
+      where: {
+        institutions: {
+          some: {
+            institutionId,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'asc',
       },

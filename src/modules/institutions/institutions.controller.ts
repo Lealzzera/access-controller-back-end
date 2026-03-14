@@ -27,7 +27,6 @@ import { Role } from 'src/decorators/role.decorator';
   path: 'institution',
   version: '1',
 })
-@UseGuards(AuthGuard)
 export class InstitutionController {
   constructor(
     private readonly registerInstitutionService: RegisterInstitutionService,
@@ -44,12 +43,14 @@ export class InstitutionController {
   }
 
   @Get('/:institutionId')
+  @UseGuards(AuthGuard)
   async getInstitutionById(@Param('institutionId') institutionId: string) {
     return this.getInstitutionByIdService.exec({ institutionId });
   }
 
   @Post('/configure')
   @HttpCode(201)
+  @UseGuards(AuthGuard)
   @Role('INSTITUTION')
   async configure(@Body() body: ConfigureInstitutionDTO) {
     return this.configureInstitutionService.exec(body);
@@ -57,6 +58,7 @@ export class InstitutionController {
 
   @Delete('/period/:periodId')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   @Role('INSTITUTION')
   async deletePeriod(@Param('periodId') periodId: string) {
     await this.deletePeriodService.exec({ periodId });
@@ -64,12 +66,14 @@ export class InstitutionController {
 
   @Delete('/grade/:gradeId')
   @HttpCode(204)
+  @UseGuards(AuthGuard)
   @Role('INSTITUTION')
   async deleteGrade(@Param('gradeId') gradeId: string) {
     await this.deleteGradeService.exec({ gradeId });
   }
 
   @Patch('/period/:periodId')
+  @UseGuards(AuthGuard)
   @Role('INSTITUTION')
   async updatePeriod(
     @Param('periodId') periodId: string,
@@ -79,6 +83,7 @@ export class InstitutionController {
   }
 
   @Patch('/grade/:gradeId')
+  @UseGuards(AuthGuard)
   @Role('INSTITUTION')
   async updateGrade(
     @Param('gradeId') gradeId: string,
