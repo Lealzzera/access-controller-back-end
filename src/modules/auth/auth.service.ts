@@ -22,17 +22,14 @@ export class AuthService {
   ) {}
 
   async generateToken({ email, password }: AuthServiceRequest) {
-    console.log('entrou');
     const user =
       (await this.institutionsRepository.findInstitutionByEmail(email)) ??
       (await this.responsibleRepository.findResponsibleByEmail(email));
     if (!user) {
-      console.log('aqui?');
       throw new UnauthorizedException('Invalid user credentials');
     }
 
     const doesUserPasswordMatch = await compare(password, user.password);
-    console.log({ doesUserPasswordMatch });
     if (!doesUserPasswordMatch) {
       throw new UnauthorizedException('Invalid user credentials');
     }
@@ -42,12 +39,10 @@ export class AuthService {
     }
 
     const payload = { sub: user.id, role: user.role };
-    console.log({ payload });
     const access_token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: '20d',
     });
-    console.log({ access_token });
     return { access_token };
   }
 }

@@ -1,7 +1,8 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { FetchGradesByInstitutionIdService } from './use-cases/fetch-grades-by-institution-id.service';
 import { Role } from 'src/decorators/role.decorator';
+import { CreateGradeService } from './use-cases/create-grade.service';
 
 @Controller({
   path: 'grade',
@@ -11,6 +12,7 @@ import { Role } from 'src/decorators/role.decorator';
 export class GradeController {
   constructor(
     private readonly fetchGradesByInstitutionIdService: FetchGradesByInstitutionIdService,
+    private readonly createGradeService: CreateGradeService,
   ) {}
 
   @Get('/:institutionId')
@@ -20,5 +22,16 @@ export class GradeController {
       institutionId,
     });
     return grades;
+  }
+
+  @Post('/create')
+  @Role('INSTITUTION')
+  async createGrade(@Body() body: { name: string; institutionId: string }) {
+    console.log('bateu aqui', body)
+    const grade = await this.createGradeService.exec({
+      name: body.name,
+      institutionId: body.institutionId,
+    });
+    return grade;
   }
 }
