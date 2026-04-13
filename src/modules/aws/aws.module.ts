@@ -10,7 +10,10 @@ import { GetPresignedUrlService } from './get-presigned-url.service';
   providers: [
     {
       provide: 'S3_CLIENT',
-      useFactory: () => new S3Client({ region: process.env.AWS_REGION }),
+      useFactory: () => new S3Client({ region: process.env.AWS_REGION, credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      } }),
     },
     SavePictureService,
     DeletePictureService,
