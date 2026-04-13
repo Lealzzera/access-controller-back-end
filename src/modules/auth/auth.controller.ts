@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { AuthService } from './auth.service';
 
 @Controller({
   path: 'auth',
