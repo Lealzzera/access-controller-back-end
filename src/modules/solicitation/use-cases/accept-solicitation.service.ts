@@ -5,6 +5,7 @@ import { ISolicitationRepository } from '../repositories/interfaces/solicitation
 import { SolicitationGateway } from '../solicitation.gateway';
 import { GetPresignedUrlService } from 'src/modules/aws/get-presigned-url.service';
 import { resolveSolicitationPictures } from '../helpers/resolve-solicitation-pictures';
+import { RegisterHistoryService } from 'src/modules/history/use-cases/register-history.service';
 
 interface AcceptSolicitationRequest {
   solicitationId: string;
@@ -18,6 +19,7 @@ export class AcceptSolicitationService {
     private readonly childrenRepository: IChildrenRepository,
     private readonly solicitationGateway: SolicitationGateway,
     private readonly getPresignedUrlService: GetPresignedUrlService,
+    private readonly registerHistoryService: RegisterHistoryService,
   ) {}
 
   async exec({ solicitationId }: AcceptSolicitationRequest) {
@@ -40,6 +42,13 @@ export class AcceptSolicitationService {
     await this.childrenRepository.update({
       id: solicitation.childId,
       isPresent: solicitation.type === SolicitationType.DROP_OFF,
+    });
+
+    await this.registerHistoryService.exec({
+      type: solicitation.type,
+      childId: solicitation.childId,
+      responsibleId: solicitation.responsibleId,
+      institutionId: solicitation.institutionId,
     });
 
     const resolved = await resolveSolicitationPictures(

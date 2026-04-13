@@ -30,6 +30,7 @@ model Child {
   gradeId       String?
   isPresent     Boolean?                @default(false)
   solicitations Solicitation[]
+  history       History[]
 
   @@map("children")
 }
@@ -53,6 +54,7 @@ model Responsible {
   institutions ResponsibleOnInstitution[]
   role          Role
   solicitations Solicitation[]
+  history       History[]
 
   @@map("responsible")
 }
@@ -78,6 +80,7 @@ model Institution {
   periods      Period[]
   grades        Grade[]
   solicitations  Solicitation[]
+  history        History[]
 
   @@map("institutions")
 }
@@ -157,4 +160,19 @@ model Solicitation {
   updatedAt       DateTime           @updatedAt
 
   @@map("solicitations")
+}
+
+model History {
+  id            String             @id @default(uuid())
+  type          SolicitationType
+  childId       String
+  responsibleId String
+  institutionId String
+  createdAt     DateTime           @default(now())
+
+  child         Child              @relation(fields: [childId], references: [id])
+  responsible   Responsible        @relation(fields: [responsibleId], references: [id])
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+
+  @@map("history")
 }

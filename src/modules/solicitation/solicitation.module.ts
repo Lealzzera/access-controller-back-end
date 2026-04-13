@@ -11,12 +11,15 @@ import { CreateSolicitationService } from './use-cases/create-solicitation.servi
 import { AcceptSolicitationService } from './use-cases/accept-solicitation.service';
 import { RejectSolicitationService } from './use-cases/reject-solicitation.service';
 import { FetchPendingSolicitationsService } from './use-cases/fetch-pending-solicitations.service';
+import { NotifyArrivalService } from './use-cases/notify-arrival.service';
+import { HistoryModule } from '../history/history.module';
 
 @Module({
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
+    HistoryModule,
   ],
   providers: [
     {
@@ -29,6 +32,7 @@ import { FetchPendingSolicitationsService } from './use-cases/fetch-pending-soli
     AcceptSolicitationService,
     RejectSolicitationService,
     FetchPendingSolicitationsService,
+    NotifyArrivalService,
     { provide: 'ISolicitationRepository', useClass: SolicitationRepository },
     { provide: 'IChildrenRepository', useClass: ChildrenRepository },
     {
