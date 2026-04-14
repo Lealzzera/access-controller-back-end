@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: access-controller-container
+    container_name: access-controller-db
     image: postgres
     ports:
       - 5430:5432
@@ -11,6 +11,25 @@ services:
       - PGDATA=/data/postgres
     volumes:
       - postgres-data:/data/postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${USER_DATABASE} -d ${DATABASE_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    container_name: access-controller-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   postgres-data:
