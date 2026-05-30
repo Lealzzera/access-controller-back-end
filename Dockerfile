@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
+RUN npm ci && npx prisma generate
 
 COPY tsconfig*.json nest-cli.json ./
 COPY src ./src
@@ -18,14 +18,26 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
+# wget is used by HEALTHCHECK; alpine doesn't ship it by default.
+RUN apk add --no-cache wget
+
 COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm ci --omit=dev && \
-    npx prisma generate
+    npx prisma generate && \
+    npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 
+# Run as a non-root user.
+RUN addgroup -S app && adduser -S app -G app && chown -R app:app /app
+USER app
+
+ENV PORT=3000
 EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget --quiet --spider http://localhost:${PORT}/api || exit 1
 
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]

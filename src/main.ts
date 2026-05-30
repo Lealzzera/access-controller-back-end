@@ -23,7 +23,7 @@ async function bootstrap() {
     }),
   );
 
-  const port = process.env.PORT;
+  const port = process.env.PORT ?? 3000;
   Logger.log(`Running on ${port}`);
   await app.listen(port);
 }
