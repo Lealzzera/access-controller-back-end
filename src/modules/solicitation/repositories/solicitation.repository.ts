@@ -61,4 +61,17 @@ export class SolicitationRepository implements ISolicitationRepository {
 
     return solicitations;
   }
+
+  async findLatestByChildAndResponsible(
+    childId: string,
+    responsibleId: string,
+  ): Promise<ISolicitationWithDetails | null> {
+    const solicitation = await prisma.solicitation.findFirst({
+      where: { childId, responsibleId },
+      include: solicitationInclude,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return solicitation ?? null;
+  }
 }

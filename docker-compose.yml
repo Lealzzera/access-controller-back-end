@@ -26,6 +26,8 @@ services:
       - ${PORT}:${PORT}
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=postgresql://${USER_DATABASE}:${USER_DATABASE_PASSWORD}@postgres:5432/${DATABASE_NAME}
     depends_on:
       postgres:
         condition: service_healthy

@@ -32,7 +32,8 @@ export class AuthController {
 
       return { access_token, statusCode: 200 };
     } catch (err) {
-      return err.response;
+      console.log(err);
+      return err;
     }
   }
 }

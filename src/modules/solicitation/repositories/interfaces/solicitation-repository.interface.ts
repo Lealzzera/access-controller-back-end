@@ -17,4 +17,8 @@ export interface ISolicitationRepository {
   findById(id: string): Promise<ISolicitationWithDetails | null>;
   updateStatus(id: string, status: SolicitationStatus): Promise<ISolicitationWithDetails>;
   findPendingByInstitutionId(institutionId: string): Promise<ISolicitationWithDetails[]>;
+  findLatestByChildAndResponsible(
+    childId: string,
+    responsibleId: string,
+  ): Promise<ISolicitationWithDetails | null>;
 }

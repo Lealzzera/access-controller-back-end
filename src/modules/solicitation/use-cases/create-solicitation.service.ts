@@ -30,6 +30,8 @@ export class CreateSolicitationService {
     private readonly getPresignedUrlService: GetPresignedUrlService,
   ) {}
 
+  private static readonly COOLDOWN_MS = 5 * 60 * 1000;
+
   async exec({ type, childId, responsibleId }: CreateSolicitationRequest) {
     const child = await this.childrenRepository.findChildById(childId);
 
@@ -61,6 +63,43 @@ export class CreateSolicitationService {
 
     if (type === SolicitationType.PICK_UP && !child.isPresent) {
       throw new BadRequestException('Child is not present at the institution');
+    }
+
+    // 5-minute cooldown + override of any still-pending solicitation
+    // from this responsible for this child.
+    const latest =
+      await this.solicitationRepository.findLatestByChildAndResponsible(
+        childId,
+        responsibleId,
+      );
+
+    if (latest) {
+      const elapsedMs = Date.now() - new Date(latest.createdAt).getTime();
+      if (elapsedMs < CreateSolicitationService.COOLDOWN_MS) {
+        const remainingSec = Math.ceil(
+          (CreateSolicitationService.COOLDOWN_MS - elapsedMs) / 1000,
+        );
+        throw new BadRequestException(
+          `Please wait ${remainingSec}s before sending another solicitation for this child`,
+        );
+      }
+
+      // Cooldown expired but the previous request is still hanging in
+      // the institution panel — override it.
+      if (latest.status === 'PENDING') {
+        const overridden = await this.solicitationRepository.updateStatus(
+          latest.id,
+          'REJECTED',
+        );
+        const resolvedOverridden = await resolveSolicitationPictures(
+          overridden,
+          this.getPresignedUrlService,
+        );
+        this.solicitationGateway.notifyInstitution(child.institutionId, {
+          event: 'solicitation-rejected',
+          data: resolvedOverridden,
+        });
+      }
     }
 
     const solicitation = await this.solicitationRepository.create({
