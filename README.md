@@ -1,99 +1,146 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Access Controller API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend NestJS com Prisma, PostgreSQL, Socket.IO e S3.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Rodando localmente
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+1. Copie o arquivo de exemplo:
 
 ```bash
-$ npm install
+cp .env.example .env
 ```
 
-## Compile and run the project
+2. Preencha as variaveis do `.env`.
+
+3. Suba o banco e a API com Docker Compose:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up --build
 ```
 
-## Run tests
+4. Teste a rota de saude:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+curl http://localhost:3000/api/health
 ```
 
-## Deployment
+Ela deve responder algo como:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```json
+{
+  "status": "ok",
+  "uptime": 12.34,
+  "timestamp": "2026-05-30T00:00:00.000Z"
+}
+```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Deploy recomendado na AWS
+
+A opcao mais simples para este backend em AWS e:
+
+- Amazon ECS Express Mode/Fargate para rodar o container NestJS.
+- Amazon RDS PostgreSQL para o banco.
+- Amazon ECR para guardar a imagem Docker.
+- Amazon S3 para as imagens, como o codigo ja usa hoje.
+- Amplify continua hospedando o frontend.
+
+## Variaveis de ambiente de producao
+
+Cadastre estas variaveis no servico ECS:
+
+```env
+PORT=3000
+NODE_ENV=production
+DATABASE_URL=postgresql://USER:PASSWORD@RDS_HOST:5432/DATABASE_NAME
+JWT_SECRET=change-me-to-a-long-random-secret
+ACCESS_CONTROLLER_FRONT_END=https://your-amplify-domain.amplifyapp.com
+AWS_REGION=sa-east-1
+AWS_BUCKET_NAME=your-s3-bucket-name
+```
+
+Em producao, prefira dar permissao de S3 pela IAM Role da task ECS em vez de cadastrar `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`.
+
+## Passo a passo de deploy
+
+### 1. Criar o RDS PostgreSQL
+
+Crie uma instancia PostgreSQL no RDS. Use acesso publico desativado e salve host, porta, usuario, senha e nome do banco.
+
+Depois monte a `DATABASE_URL`:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@RDS_HOST:5432/DATABASE_NAME
+```
+
+### 2. Criar o repositorio no ECR
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+aws ecr create-repository --repository-name access-controller-api
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 3. Buildar e enviar a imagem
 
-## Resources
+Entre na pasta do backend e rode:
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+docker build -t access-controller-api .
+docker tag access-controller-api:latest ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/access-controller-api:latest
+docker push ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/access-controller-api:latest
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Antes do `docker push`, faca login no ECR pelo comando indicado pelo proprio console da AWS.
 
-## Support
+### 4. Criar o servico no ECS
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+No ECS Express Mode/Fargate:
 
-## Stay in touch
+- Imagem: `ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/access-controller-api:latest`
+- Porta do container: `3000`
+- Health check path: `/api/health`
+- VPC: a mesma VPC do RDS
+- Variaveis de ambiente: as listadas acima
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+O Dockerfile ja executa:
 
-## License
+```bash
+npx prisma migrate deploy && node dist/main
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Ou seja, as migrations do Prisma sobem automaticamente quando o container inicia.
+
+### 5. Liberar o banco para a API
+
+No Security Group do RDS, libere entrada na porta `5432` somente a partir do Security Group do servico ECS.
+
+### 6. Permitir acesso ao S3
+
+Na IAM Role da task ECS, permita acesso ao bucket:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+  "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/*"
+}
+```
+
+### 7. Atualizar o frontend no Amplify
+
+No Amplify, cadastre:
+
+```env
+BACKEND_URL=https://api.your-domain.com/api/v1
+NEXT_PUBLIC_BACKEND_URL=https://api.your-domain.com
+```
+
+`BACKEND_URL` e usado pelas server actions REST. `NEXT_PUBLIC_BACKEND_URL` e usado pelo Socket.IO em `/solicitations`.
+
+### 8. Testar producao
+
+Depois do deploy, teste:
+
+```bash
+curl https://api.your-domain.com/api/health
+```
+
+Se responder `status: ok`, o container esta saudavel e pronto para receber trafego.

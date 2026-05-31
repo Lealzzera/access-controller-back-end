@@ -10,6 +10,7 @@ import { PeriodModule } from './modules/period/period.module';
 import { AwsModule } from './modules/aws/aws.module';
 import { SolicitationModule } from './modules/solicitation/solicitation.module';
 import { HistoryModule } from './modules/history/history.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -28,5 +29,6 @@ import { HistoryModule } from './modules/history/history.module';
     SolicitationModule,
     HistoryModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
