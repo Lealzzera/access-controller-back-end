@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { getAllowedOrigins } from './helpers/allowed-origins';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,7 +14,7 @@ async function bootstrap() {
   });
   app.enableCors({
     credentials: true,
-    origin: process.env.ACCESS_CONTROLLER_FRONT_END,
+    origin: getAllowedOrigins(),
   });
   app.useGlobalPipes(
     new ValidationPipe({

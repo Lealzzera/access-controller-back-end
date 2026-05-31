@@ -7,10 +7,11 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { getAllowedOrigins } from '../../helpers/allowed-origins';
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.ACCESS_CONTROLLER_FRONT_END,
+    origin: getAllowedOrigins(),
     credentials: true,
   },
   namespace: '/solicitations',
