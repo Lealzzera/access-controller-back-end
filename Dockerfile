@@ -3,6 +3,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 COPY prisma ./prisma/
 
@@ -18,8 +20,8 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# wget is used by HEALTHCHECK; alpine doesn't ship it by default.
-RUN apk add --no-cache wget
+# wget is used by HEALTHCHECK; Prisma needs OpenSSL at runtime.
+RUN apk add --no-cache openssl wget
 
 COPY package*.json ./
 COPY prisma ./prisma/
